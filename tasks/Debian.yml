@@ -1,14 +1,21 @@
 ---
 - name: Install Xvfb package
-  become: true
   ansible.builtin.apt:
     install_recommends: !!str no
     name: xvfb
     state: present
     update_cache: !!str yes
-- name: Set up Xvfb service
   become: true
+- name: Create Xvfb service
   ansible.builtin.template:
-    src: init-d-xvfb.j2
+    src: init-d-xvfb-Debian.j2
     dest: /etc/init.d/xvfb
     mode: 0755
+  become: true
+  changed_when: true
+- name: Start Xvfb service
+  ansible.builtin.service:
+    name: xvfb
+    enabled: !!str yes
+    state: started
+  become: true
