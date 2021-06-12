@@ -1,0 +1,25 @@
+---
+driver:
+  name: docker
+lint: |
+  set -e
+  #  yamllint .
+  #  ansible-lint
+platforms:
+  - name: alpine-latest
+    image: alpine:latest
+  - name: debian-latest
+    image: debian:latest
+  - name: ubuntu-latest
+    image: ubuntu:latest
+provisioner:
+  config_options:
+    defaults:
+      remote_tmp: /tmp/.ansible-tmp-$${USER}
+  name: ansible
+  inventory:
+    group_vars:
+      all:
+      #  ansible_user: nobody
+verifier:
+  name: ansible
