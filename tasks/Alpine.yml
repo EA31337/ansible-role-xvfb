@@ -1,0 +1,7 @@
+---
+- name: Install Xvfb package
+  become: true
+  community.general.apk:
+    name: xvfb
+    state: present
+    update_cache: true

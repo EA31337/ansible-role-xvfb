@@ -1,0 +1,8 @@
+---
+- name: Install Xvfb package
+  apt:
+    install_recommends: !!str no
+    name: xvfb
+    state: present
+    update_cache: !!str yes
+
