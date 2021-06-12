@@ -4,4 +4,4 @@
   tasks:
     - name: Verify Xvfb command
       changed_when: false
-      command: command -v Xvfb
+      command: which Xvfb
