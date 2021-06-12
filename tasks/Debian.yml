@@ -1,7 +1,14 @@
 ---
 - name: Install Xvfb package
-  apt:
+  become: true
+  ansible.builtin.apt:
     install_recommends: !!str no
     name: xvfb
     state: present
     update_cache: !!str yes
+- name: Set up Xvfb service
+  become: true
+  ansible.builtin.template:
+    src: init-d-xvfb.j2
+    dest: /etc/init.d/xvfb
+    mode: 0755

@@ -1,0 +1,61 @@
+#!/bin/sh
+# /etc/init.d/xvfb: set up the X virtual framebuffer server
+### BEGIN INIT INFO
+# Provides:          xvfb
+# Required-Start:    $remote_fs
+# Required-Stop:     $remote_fs
+# Default-Start:     S
+# Default-Stop:
+# Short-Description: set up the X virtual framebuffer server
+### END INIT INFO
+
+set -e
+
+PATH=/usr/bin:/usr/sbin:/bin:/sbin
+SVC_CMD=/usr/bin/Xvfb
+SVC_CMD_ARGS="{{ xvfb_display }} -screen 0 1024x768x24 -ac +extension GLX +render -noreset"
+PIDFILE=/var/run/xvfb.pid
+
+. /lib/lsb/init-functions
+if [ -f /etc/default/rcS ]; then
+  . /etc/default/rcS
+fi
+
+case "$1" in
+  start)
+    if [ "$VERBOSE" != no ]; then
+      log_begin_msg "Setting up X virtual framebuffer..."
+    fi
+    start-stop-daemon --start --quiet --pidfile $PIDFILE --make-pidfile --background --exec $SVC_CMD -- $SVC_CMD_ARGS
+    if [ "$VERBOSE" != no ]; then
+      log_end_msg 0
+    fi
+  ;;
+
+  restart|reload|force-reload)
+    /etc/init.d/xvfb stop
+    /etc/init.d/xvfb start
+  ;;
+
+  stop)
+    if [ "$VERBOSE" != no ]; then
+      log_begin_msg "Stopping X virtual framebuffer..."
+    fi
+    start-stop-daemon --stop --quiet --pidfile $PIDFILE
+    if [ "$VERBOSE" != no ]; then
+      log_end_msg 0
+    fi
+  ;;
+
+  status)
+    start-stop-daemon -T --pidfile $PIDFILE
+  ;;
+  *)
+    log_success_msg "Usage: /etc/init.d/xvfb {start|stop|status|restart|reload|force-reload}"
+    exit 1
+    ;;
+esac
+
+exit 0
+
+# vim:set ai et sts=2 sw=2 tw=0:
