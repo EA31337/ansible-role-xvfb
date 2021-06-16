@@ -17,7 +17,6 @@
     dest: /etc/init.d/xvfb
     mode: 0755
   become: true
-  changed_when: true
 - name: Start Xvfb service
   ansible.builtin.service:
     name: xvfb
