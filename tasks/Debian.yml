@@ -9,13 +9,13 @@
 - name: Create Xvfb profile
   ansible.builtin.template:
     dest: /etc/profile.d/10-xvfb.sh
-    mode: 0644
+    mode: "0644"
     src: profile-d-xvfb.j2
 - name: Create Xvfb service
   ansible.builtin.template:
     src: init-d-xvfb-Debian.j2
     dest: /etc/init.d/xvfb
-    mode: 0755
+    mode: "0755"
   become: true
 - name: Start Xvfb service
   ansible.builtin.service:
