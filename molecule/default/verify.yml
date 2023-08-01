@@ -4,4 +4,4 @@
   tasks:
     - name: Verify Xvfb command
       changed_when: false
-      command: which Xvfb
+      ansible.builtin.command: which Xvfb
