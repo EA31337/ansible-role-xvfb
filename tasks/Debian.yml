@@ -24,3 +24,7 @@
     enabled: !!str yes
     state: started
   become: true
+  failed_when:
+    - "'unknown state' not in service_xvfb_res.msg"
+    - service_xvfb_res.stderr | length > 0
+  register: service_xvfb_res
