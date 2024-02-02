@@ -1,13 +1,14 @@
 ---
 galaxy_info:
   author: EA31337 Ltd
-  description: Role to install Xvfb.
+  description: |
+    Role to install Xvfb.
   galaxy_tags:
     - emulator
     - games
     - graphics
+    - linux
     - windows
-    - wine
   issue_tracker_url: https://github.com/EA31337/ansible-role-xvfb
   license: GPLv3
   min_ansible_version: "2.7"
