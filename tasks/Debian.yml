@@ -28,3 +28,10 @@
     - service_xvfb_res.stderr is defined
     - service_xvfb_res.stderr | length > 0
   register: service_xvfb_res
+- name: Ensures x11-utils package is installed
+  ansible.builtin.apt:
+    install_recommends: !!str no
+    name: x11-utils
+    state: present
+  become: true
+  when: xvfb_install_x11_utils
