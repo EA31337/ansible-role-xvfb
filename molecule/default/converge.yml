@@ -5,3 +5,5 @@
     - name: Include main role
       ansible.builtin.include_role:
         name: ansible-role-xvfb
+      vars:
+        xvfb_install_x11_utils: true
