@@ -28,7 +28,8 @@
         "ghcr.io/hspaans/devcontainer-features/ansible-lint:1": {},
         // "ghcr.io/maks1ms/devcontainers-features/wine:0": {},
         "ghcr.io/devcontainers-contrib/features/node-asdf:0": {},
-        "ghcr.io/devcontainers-extra/features/pipx-package:1": {}
+        "ghcr.io/devcontainers-extra/features/pipx-package:1": {},
+        "ghcr.io/jungaretti/features/ripgrep:1": {}
     },
     // Use 'forwardPorts' to make a list of ports inside the container available locally.
     // "forwardPorts": [],
