@@ -28,7 +28,12 @@
         "ghcr.io/hspaans/devcontainer-features/ansible-lint:1": {},
         // "ghcr.io/maks1ms/devcontainers-features/wine:0": {},
         "ghcr.io/devcontainers-contrib/features/node-asdf:0": {},
-        "ghcr.io/devcontainers-extra/features/pipx-package:1": {},
+        "ghcr.io/devcontainers-extra/features/pipx-package:1": {
+            "packages": [
+                "ansible",
+                "molecule"
+            ]
+        },
         "ghcr.io/jungaretti/features/ripgrep:1": {}
     },
     // Use 'forwardPorts' to make a list of ports inside the container available locally.
@@ -39,6 +44,5 @@
     "image": "mcr.microsoft.com/devcontainers/base:jammy",
     "name": "ansible-role-xvfb",
     // Comment out to connect as root instead. More info: https://aka.ms/vscode-remote/containers/non-root.
-    "remoteUser": "vscode",
-    "onCreateCommand": "sudo apt update && sudo apt install -y pipx && pipx install --include-deps ansible"
+    "remoteUser": "vscode"
 }
