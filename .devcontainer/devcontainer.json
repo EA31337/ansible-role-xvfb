@@ -22,15 +22,13 @@
     },
     // Features to add to the dev container. More info: https://containers.dev/features.
     "features": {
-        "ghcr.io/devcontainers-contrib/features/actionlint:1": {},
         "ghcr.io/guiyomh/features/vim:0": {},
-        "ghcr.io/prulloac/devcontainer-features/pre-commit:1": {},
-        "ghcr.io/hspaans/devcontainer-features/ansible-lint:1": {},
         // "ghcr.io/maks1ms/devcontainers-features/wine:0": {},
-        "ghcr.io/devcontainers-contrib/features/node-asdf:0": {},
         "ghcr.io/devcontainers-extra/features/pipx-package:1": {
             "packages": [
                 "ansible",
+                "ansible-lint",
+                "pre-commit",
                 "molecule"
             ]
         },
