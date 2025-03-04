@@ -35,7 +35,7 @@
     // "postCreateCommand": "uname -a",
     // Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
     "image": "mcr.microsoft.com/devcontainers/base:jammy",
-    "name": "ansible-role-mt-runner",
+    "name": "ansible-role-xvfb",
     // Comment out to connect as root instead. More info: https://aka.ms/vscode-remote/containers/non-root.
     "remoteUser": "vscode",
     "onCreateCommand": "sudo apt update && sudo apt install -y pipx && pipx install --include-deps ansible"
