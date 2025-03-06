@@ -10,8 +10,10 @@ platforms:
     image: i386/alpine:latest
   - name: debian-latest
     image: debian:latest
-  - name: ubuntu-bionic
-    image: ubuntu:bionic
+  - name: ubuntu-jammy
+    image: ubuntu:jammy
+  - name: ubuntu-noble
+    image: ubuntu:noble
   - name: ubuntu-latest
     image: ubuntu:latest
 provisioner:

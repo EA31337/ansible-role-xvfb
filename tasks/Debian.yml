@@ -21,13 +21,9 @@
 - name: Ensures Xvfb service is started
   ansible.builtin.service:
     name: xvfb
-    enabled: !!str yes
+    enabled: true
     state: started
   become: true
-  failed_when:
-    - service_xvfb_res.stderr is defined
-    - service_xvfb_res.stderr | length > 0
-  register: service_xvfb_res
 - name: Ensures x11-utils package is installed
   ansible.builtin.apt:
     install_recommends: !!str no
