@@ -1,1 +1,20 @@
 ---
+- name: Check if Nix store exists
+  ansible.builtin.stat:
+    path: /nix/store
+  register: nix_store_stat
+
+- name: Check if Xvfb is already installed
+  ansible.builtin.shell: nix-env -q | grep -q xorg-server
+  register: xvfb_check
+  failed_when: false
+  changed_when: false
+  when: nix_store_stat.stat.exists
+
+- name: Ensure Xvfb package is installed on Nix image
+  ansible.builtin.command: nix-env -iA nixpkgs.xorg.xvfb
+  when:
+    - nix_store_stat.stat.exists
+    - xvfb_check.rc != 0
+  register: xvfb_install
+  changed_when: xvfb_install.rc == 0
