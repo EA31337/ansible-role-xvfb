@@ -9,9 +9,7 @@
     cmd: |
       set -o pipefail
       nix-env -q | grep -q xorg-server
-    executable: /bin/bash
   register: xvfb_check
-  failed_when: false
   changed_when: false
   when: nix_store_stat.stat.exists
 
