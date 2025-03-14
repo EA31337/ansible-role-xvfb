@@ -1,3 +1,4 @@
 ---
 xvfb_display: ":0"
 xvfb_install_x11_utils: false
+xvfb_service_enabled: true
