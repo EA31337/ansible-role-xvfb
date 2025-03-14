@@ -5,7 +5,7 @@
   register: nix_store_stat
 
 - name: Check if Xvfb is already installed
-  ansible.builtin.shell: nix-env -q | grep -q xorg-server
+  ansible.builtin.shell: bash -o pipefail -c "nix-env -q | grep -q xorg-server"
   register: xvfb_check
   failed_when: false
   changed_when: false
