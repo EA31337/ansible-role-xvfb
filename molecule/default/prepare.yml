@@ -2,20 +2,3 @@
 - name: Prepare
   hosts: all
   gather_facts: false
-
-  tasks:
-    - name: Check if NixOS
-      ansible.builtin.raw: test -d /etc/nix
-      register: is_nixos
-      failed_when: false
-      changed_when: false
-
-    - name: Install Python (NixOS)
-      ansible.builtin.raw: nix-env -i python3
-      changed_when: is_nixos.rc == 0
-      when: is_nixos.rc == 0
-
-    - name: Install sudo (NixOS)
-      ansible.builtin.command: nix-env -i sudo
-      changed_when: is_nixos.rc == 0
-      when: is_nixos.rc == 0
