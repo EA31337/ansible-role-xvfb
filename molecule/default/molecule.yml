@@ -10,6 +10,8 @@ platforms:
     image: i386/alpine:latest
   - name: debian-latest
     image: debian:latest
+  - name: nixos-latest
+    image: nixos/nix:latest
   - name: ubuntu-jammy
     image: ubuntu:jammy
   - name: ubuntu-noble
