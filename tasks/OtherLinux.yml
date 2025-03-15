@@ -52,4 +52,3 @@
     - name: Include configuration tasks for supervisor
       ansible.builtin.include_tasks:
         file: supervisord.yml
-      when: supervisor_install.rc == 0
