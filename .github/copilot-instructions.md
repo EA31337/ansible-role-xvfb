@@ -37,6 +37,8 @@ You are expected to be an expert in:
 
 ## YAML Guidelines
 
+Rules:
+
 - yaml[truthy]: Truthy value should be one of [false, true]
 
 ## Project Specifics
