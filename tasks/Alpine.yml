@@ -5,9 +5,74 @@
     name: xvfb
     state: present
     update_cache: true
+
 - name: Ensures libx11 package is installed
   become: true
   community.general.apk:
     name: libx11
     state: present
   when: xvfb_install_x11_utils
+
+- name: Ensure necessary directories exist
+  become: true
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    mode: "0755"
+  loop:
+    - /etc/init.d
+    - /etc/profile.d
+    - /run/openrc
+
+- name: Ensures Xvfb service is created
+  become: true
+  ansible.builtin.template:
+    src: init-d-xvfb-Alpine.j2
+    dest: /etc/init.d/xvfb
+    mode: "0755"
+
+- name: Ensure OpenRC is installed
+  become: true
+  community.general.apk:
+    name: openrc
+    state: present
+    update_cache: true
+
+  # This task ensures the creation of the /run/openrc/softlevel file.
+  # The /run/openrc/softlevel file is required by OpenRC to track the current runlevel.
+  # Without this file, OpenRC may not function correctly, leading to issues with service management.
+- name: Create /run/openrc/softlevel file
+  become: true
+  ansible.builtin.file:
+    mode: "0644"
+    path: /run/openrc/softlevel
+    state: touch
+
+- name: Register Xvfb service with OpenRC
+  become: true
+  ansible.builtin.command:
+    cmd: rc-update add xvfb default
+    creates: /etc/runlevels/default/xvfb
+
+- name: Ensures Xvfb profile is created
+  become: true
+  ansible.builtin.template:
+    dest: /etc/profile.d/10-xvfb.sh
+    mode: "0644"
+    src: profile-d-xvfb.j2
+
+- name: Check if Xvfb service is running
+  become: true
+  ansible.builtin.command:
+    cmd: rc-service xvfb status
+  register: xvfb_status
+  changed_when: false
+  failed_when: xvfb_status.rc not in [0, 3]
+
+- name: Start Xvfb service if not running
+  become: true
+  ansible.builtin.service:
+    name: xvfb
+    enabled: true
+    state: started
+  when: xvfb_status.rc != 0
