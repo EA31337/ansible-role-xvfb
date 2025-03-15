@@ -3,6 +3,6 @@ FROM {{ item.image }}
 
 # Install required packages for Ansible to work on NixOS.
 RUN nix-channel --update && \
-    nix-env -iA nixpkgs.python310
+    nix-env -iA nixpkgs.procps nixpkgs.python310
 
 {% endif %}
