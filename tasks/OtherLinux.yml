@@ -8,23 +8,24 @@
   become: "{{ ansible_user_id != 'root' }}"
   block:
 
-    - name: Check if Xvfb is already installed
+    - name: Check if Xorg is already installed
       ansible.builtin.shell:
         cmd: |
           set -o pipefail
           nix-env -q | grep -q xorg-server
       changed_when: false
-      failed_when: xvfb_check.rc not in [0, 1]
-      register: xvfb_check
+      failed_when: xorg_check.rc not in [0, 1]
+      register: xorg_check
       when: nix_store_stat.stat.exists
 
-    - name: Ensure Xvfb package is installed on Nix image
-      ansible.builtin.command: nix-env -iA nixpkgs.xorg.xvfb
+    # Note: xorg-server package provides: X Xephyr Xnest Xorg Xvfb gtf
+    - name: Ensure Xorg package is installed on Nix image
+      ansible.builtin.command: nix-env -iA nixpkgs.xorg.xorgserver
       when:
         - nix_store_stat.stat.exists
-        - xvfb_check.rc != 0
-      register: xvfb_install
-      changed_when: xvfb_install.rc == 0
+        - xorg_check.rc != 0
+      register: xorg_install
+      changed_when: xorg_install.rc == 0
 
 - name: Ensure Xvfb is service installed
   become: "{{ ansible_user_id != 'root' }}"
