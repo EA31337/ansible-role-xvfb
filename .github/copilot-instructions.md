@@ -45,9 +45,12 @@ This role installs and configures Xvfb (X Virtual Framebuffer) with distribution
 
 Notes:
 
+- Project utilizes Codespaces with config file at .devcontainer/devcontainer.json
+  and requirements at .devcontainer/requirements.txt
+- GitHub Actions are used to validate the code by running
+  pre-commit checks (see .pre-commit-config.yaml file) and Molecule (molecule/).
 - Service management uses supervisord across platforms.
 - Formatting rules are defined in .yamllint (YAML) and .markdownlint.yaml (Markdown) files.
-- Pre-commit is used to validate the changes (.pre-commit-config.yaml file)
 
 ### Key Variables
 
