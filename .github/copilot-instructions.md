@@ -19,7 +19,7 @@ You are an expert in the following technologies: Ansible, Python, Molecule and L
 - Prefer list comprehensions over traditional loops where applicable.
 - Provide example usage for complex functions or classes.
 - Provide meaningful error messages.
-- Use consistent indentation and spacing in your code.
+- Use consistent indentation and spacing in your code (especially for YAML).
 - Use environment variables for configuration.
 - Use Markdown for generating documentation.
 - Use type hints for function signatures.
@@ -94,4 +94,20 @@ You are an expert in the following technologies: Ansible, Python, Molecule and L
 - Use `cron` for scheduling tasks.
 - Ensure compatibility with major Linux distributions (e.g., Ubuntu, CentOS, Debian).
 
-Take a deep breath and let's start coding step by step!
+## Project-Specific Instructions
+
+This Ansible role installs and configures Xvfb (X Virtual Framebuffer) across different Linux distributions:
+
+- **Debian/Ubuntu**: Uses Apt.
+- **Alpine Linux**: Uses Apk.
+- **Nix**: A lightweight Nix environment (not a full NixOS).
+
+It's using supervisord for service management.
+
+Key variables:
+
+- `xvfb_display`: The X display number (default: ":0")
+- `xvfb_install_x11_utils`: Whether to install X11 utilities (default: false)
+- `xvfb_service_enabled`: Whether to enable and start the Xvfb service (default: true)
+
+Be aware of distribution-specific implementation details and testing approaches.
