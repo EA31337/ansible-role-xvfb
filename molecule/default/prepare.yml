@@ -15,6 +15,6 @@
       become: true
       ansible.builtin.package:
         name: procps
-        install_recommends: no
+        install_recommends: false
         state: present
       when: ansible_distribution == 'Debian'

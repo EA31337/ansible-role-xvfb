@@ -35,6 +35,10 @@ You are expected to be an expert in:
 - Use ansible-lint and write Molecule tests for verification
 - Use descriptive task names and include helpful comments
 
+## YAML Guidelines
+
+- yaml[truthy]: Truthy value should be one of [false, true]
+
 ## Project Specifics
 
 This role installs and configures Xvfb (X Virtual Framebuffer) with distribution-specific approaches:
