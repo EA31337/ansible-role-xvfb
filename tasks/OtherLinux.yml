@@ -9,8 +9,9 @@
     cmd: |
       set -o pipefail
       nix-env -q | grep -q xorg-server
-  register: xvfb_check
   changed_when: false
+  failed_when: xvfb_check.rc not in [0, 1]
+  register: xvfb_check
   when: nix_store_stat.stat.exists
 
 - name: Ensure Xvfb package is installed on Nix image
