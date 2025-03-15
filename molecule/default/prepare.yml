@@ -1,4 +1,20 @@
 ---
 - name: Prepare
   hosts: all
-  gather_facts: false
+  gather_facts: true
+
+  tasks:
+
+    - name: Update Apt cache (Debian/Ubuntu)
+      become: true
+      ansible.builtin.apt:
+        update_cache: true
+      when: ansible_os_family == 'Debian'
+
+    - name: Ensures procps package is installed (Debian/Ubuntu)
+      become: true
+      ansible.builtin.package:
+        name: procps
+        install_recommends: no
+        state: present
+      when: ansible_distribution == 'Debian'
