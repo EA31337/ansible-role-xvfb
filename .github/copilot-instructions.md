@@ -66,7 +66,7 @@ Notes:
 
 Notes:
 
-- On variable changes, update meta/main.yml and README.md accordingly.
+- On variable changes, update defaults/main.yml and README.md accordingly.
 
 ### Testing Approach
 
