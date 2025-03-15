@@ -23,7 +23,7 @@
       ansible.builtin.include_tasks:
         file: supervisord.yml
 
-- name: Clear apt cache
+- name: Clean apt cache and perform package housekeeping
   ansible.builtin.apt:
     autoclean: !!str yes
     autoremove: !!str yes
