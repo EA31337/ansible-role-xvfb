@@ -1,0 +1,55 @@
+---
+- name: Check if Nix store exists
+  ansible.builtin.stat:
+    path: /nix/store
+  register: nix_store_stat
+
+- name: Ensure Xvfb is installed
+  become: "{{ ansible_user_id != 'root' }}"
+  block:
+
+    - name: Check if Xorg is already installed
+      ansible.builtin.shell:
+        cmd: |
+          set -o pipefail
+          nix-env -q | grep -q xorg-server
+      changed_when: false
+      failed_when: xorg_check.rc not in [0, 1]
+      register: xorg_check
+      when: nix_store_stat.stat.exists
+
+    # Note: xorg-server package provides: X Xephyr Xnest Xorg Xvfb gtf
+    - name: Ensure Xorg package is installed on Nix image
+      ansible.builtin.command: nix-env -iA nixpkgs.xorg.xorgserver
+      when:
+        - nix_store_stat.stat.exists
+        - xorg_check.rc != 0
+      register: xorg_install
+      changed_when: xorg_install.rc == 0
+
+- name: Ensure Xvfb is service installed
+  become: "{{ ansible_user_id != 'root' }}"
+  when: xvfb_service_enabled
+  block:
+
+    - name: Check if supervisor is already installed
+      ansible.builtin.shell:
+        cmd: |
+          set -o pipefail
+          nix-env -q | grep -q supervisor
+      changed_when: false
+      failed_when: supervisor_check.rc not in [0, 1]
+      register: supervisor_check
+      when: nix_store_stat.stat.exists
+
+    - name: Ensure supervisor is installed
+      ansible.builtin.command: nix-env -iA nixpkgs.python3Packages.supervisor
+      when:
+        - nix_store_stat.stat.exists
+        - supervisor_check.rc != 0
+      register: supervisor_install
+      changed_when: supervisor_install.rc == 0
+
+    - name: Include configuration tasks for supervisor
+      ansible.builtin.include_tasks:
+        file: supervisord.yml

@@ -6,28 +6,27 @@
     state: present
     update_cache: !!str yes
   become: true
-- name: Ensures Xvfb profile is created
-  ansible.builtin.template:
-    dest: /etc/profile.d/10-xvfb.sh
-    mode: "0644"
-    src: profile-d-xvfb.j2
-  become: true
-- name: Ensures Xvfb service is created
-  ansible.builtin.template:
-    src: init-d-xvfb-Debian.j2
-    dest: /etc/init.d/xvfb
-    mode: "0755"
-  become: true
-- name: Ensures Xvfb service is started
-  ansible.builtin.service:
-    name: xvfb
-    enabled: true
-    state: started
-  become: true
-- name: Ensures x11-utils package is installed
+
+- name: Ensure Xvfb is service installed
+  become: "{{ ansible_user_id != 'root' }}"
+  when: xvfb_service_enabled
+  block:
+
+    - name: Ensure supervisor is installed
+      become: true
+      ansible.builtin.apt:
+        name: supervisor
+        state: present
+        update_cache: true
+
+    - name: Include configuration tasks for supervisor
+      ansible.builtin.include_tasks:
+        file: supervisord.yml
+
+- name: Clean apt cache and perform package housekeeping
   ansible.builtin.apt:
-    install_recommends: !!str no
-    name: x11-utils
-    state: present
-  become: true
-  when: xvfb_install_x11_utils
+    autoclean: !!str yes
+    autoremove: !!str yes
+    purge: !!str yes
+    update_cache: !!str yes
+  become: "{{ ansible_user_id != 'root' }}"
