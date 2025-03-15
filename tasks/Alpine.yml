@@ -13,77 +13,18 @@
     state: present
   when: xvfb_install_x11_utils
 
-- name: Ensure necessary directories exist
-  become: true
-  ansible.builtin.file:
-    path: "{{ item }}"
-    state: directory
-    mode: "0755"
-  loop:
-    - /etc/init.d
-    - /etc/profile.d
-    - /run/openrc
+- name: Ensure Xvfb is service installed
+  become: "{{ ansible_user_id != 'root' }}"
+  when: xvfb_service_enabled
+  block:
 
-- name: Ensures Xvfb service is created
-  become: true
-  ansible.builtin.template:
-    src: init-d-xvfb-Alpine.j2
-    dest: /etc/init.d/xvfb
-    mode: "0755"
+    - name: Ensure supervisor is installed
+      become: true
+      community.general.apk:
+        name: supervisor
+        state: present
+        update_cache: true
 
-- name: Ensure OpenRC is installed
-  become: true
-  community.general.apk:
-    name: openrc
-    state: present
-    update_cache: true
-
-  # This task ensures the creation of the /run/openrc/softlevel file.
-  # The /run/openrc/softlevel file is required by OpenRC to track the current runlevel.
-  # Without this file, OpenRC may not function correctly, leading to issues with service management.
-- name: Check if /run/openrc/softlevel file exists
-  become: true
-  ansible.builtin.stat:
-    path: /run/openrc/softlevel
-  register: softlevel_file
-
-- name: Create /run/openrc/softlevel file if it doesn't exist
-  become: true
-  ansible.builtin.file:
-    mode: "0644"
-    path: /run/openrc/softlevel
-    state: touch
-  when: not softlevel_file.stat.exists
-
-- name: Register Xvfb service with OpenRC
-  become: true
-  ansible.builtin.command:
-    cmd: rc-update add xvfb default
-    creates: /etc/runlevels/default/xvfb
-
-- name: Ensures Xvfb profile is created
-  become: true
-  ansible.builtin.template:
-    dest: /etc/profile.d/10-xvfb.sh
-    mode: "0644"
-    src: profile-d-xvfb.j2
-
-- name: Check if Xvfb service is running
-  become: true
-  ansible.builtin.command:
-    cmd: rc-service xvfb status
-  register: xvfb_status
-  changed_when: false
-  failed_when: xvfb_status.rc not in [0, 3]
-
-- name: Start Xvfb service if not running
-  become: true
-  ansible.builtin.service:
-    name: xvfb
-    enabled: true
-    state: started
-  failed_when:
-    - service_start_result.failed
-    - '"is already starting" not in service_start_result.msg'
-  register: service_start_result
-  when: xvfb_status.rc != 0
+    - name: Include configuration tasks for supervisor
+      ansible.builtin.include_tasks:
+        file: supervisord.yml

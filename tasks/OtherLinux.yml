@@ -49,37 +49,7 @@
       register: supervisor_install
       changed_when: supervisor_install.rc == 0
 
-    - name: Ensure necessary directories exist
-      ansible.builtin.file:
-        path: "{{ item }}"
-        state: directory
-        mode: "0755"
-      loop:
-        - /etc/profile.d
-        - /etc/supervisor/conf.d
-        - /var/log/supervisor
-        - /var/run
-
-    - name: Ensures Xvfb profile is created
-      ansible.builtin.template:
-        dest: /etc/profile.d/10-xvfb.sh
-        mode: "0644"
-        src: profile-d-xvfb.j2
-
-    - name: Create supervisor configuration file
-      ansible.builtin.template:
-        src: supervisord-xvfb.conf.j2
-        dest: /etc/supervisor/supervisord.conf
-        mode: "0644"
-
-    - name: Create Xvfb supervisor program configuration
-      ansible.builtin.template:
-        src: supervisord-xvfb-program.conf.j2
-        dest: /etc/supervisor/conf.d/xvfb.conf
-        mode: "0644"
-
-    - name: Start supervisor daemon
-      ansible.builtin.shell: |
-        supervisord -c /etc/supervisor/supervisord.conf
-      args:
-        creates: /var/run/supervisor.pid
+    - name: Include configuration tasks for supervisor
+      ansible.builtin.include_tasks:
+        file: supervisord.yml
+      when: supervisor_install.rc == 0
