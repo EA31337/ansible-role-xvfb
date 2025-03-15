@@ -5,3 +5,25 @@
     - name: Verify Xvfb command
       changed_when: false
       ansible.builtin.command: which Xvfb
+    - name: Check if Xvfb process is running
+      when: xvfb_service_enabled | default(true)
+      block:
+        - name: Get Xvfb process status
+          ansible.builtin.command: pgrep -f Xvfb
+          register: xvfb_process
+          changed_when: false
+          failed_when: false
+
+        - name: Assert Xvfb process is running
+          ansible.builtin.assert:
+            that: xvfb_process.rc == 0
+            fail_msg: "Xvfb process is not running but should be"
+
+        - name: Check Xvfb service status
+          ansible.builtin.service_facts:
+
+        - name: Assert Xvfb service is running
+          ansible.builtin.assert:
+            that: ansible_facts.services['xvfb.service'].state == 'running'
+            fail_msg: "Xvfb service is not running but should be"
+          when: "'xvfb.service' in ansible_facts.services"

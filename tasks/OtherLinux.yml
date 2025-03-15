@@ -14,10 +14,58 @@
   register: xvfb_check
   when: nix_store_stat.stat.exists
 
-- name: Ensure Xvfb package is installed on Nix image
-  ansible.builtin.command: nix-env -iA nixpkgs.xorg.xvfb
-  when:
-    - nix_store_stat.stat.exists
-    - xvfb_check.rc != 0
-  register: xvfb_install
-  changed_when: xvfb_install.rc == 0
+- name: Ensure Xvfb is installed
+  become: "{{ ansible_user_id != 'root' }}"
+  block:
+    - name: Ensure Xvfb package is installed on Nix image
+      ansible.builtin.command: nix-env -iA nixpkgs.xorg.xvfb
+      when:
+        - nix_store_stat.stat.exists
+        - xvfb_check.rc != 0
+      register: xvfb_install
+      changed_when: xvfb_install.rc == 0
+
+    - name: Ensure OpenRC is installed
+      ansible.builtin.command: nix-env -iA nixpkgs.openrc
+      when: nix_store_stat.stat.exists
+
+    - name: Ensure necessary directories exist
+      ansible.builtin.file:
+        path: "{{ item }}"
+        state: directory
+        mode: "0755"
+      loop:
+        - /etc/init.d
+        - /etc/profile.d
+        - /etc/runlevels/default
+        - /var/run/xvfb
+
+    - name: Create /run/openrc/softlevel file
+      ansible.builtin.file:
+        path: /run/openrc/softlevel
+        state: touch
+
+    - name: Ensures Xvfb service is created
+      ansible.builtin.template:
+        src: init-d-xvfb-Nix.j2
+        dest: /etc/init.d/xvfb
+        mode: "0755"
+      when: xvfb_service_enabled
+
+    - name: Ensures Xvfb profile is created
+      ansible.builtin.template:
+        dest: /etc/profile.d/10-xvfb.sh
+        mode: "0644"
+        src: profile-d-xvfb.j2
+
+    - name: Register Xvfb service with OpenRC
+      ansible.builtin.command:
+        cmd: rc-update add xvfb default
+      when: xvfb_service_enabled
+
+    - name: Ensures Xvfb service is started
+      ansible.builtin.service:
+        name: xvfb
+        enabled: true
+        state: started
+      when: xvfb_service_enabled

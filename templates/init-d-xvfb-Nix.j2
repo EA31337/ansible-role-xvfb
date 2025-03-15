@@ -1,0 +1,18 @@
+#!/sbin/openrc-run
+
+name="Xvfb"
+description="X virtual framebuffer"
+
+command="/nix/store/$(nix-env -q --out-path | grep xorg-server | awk '{print $2}')/bin/Xvfb"
+command_args=":99 -screen 0 1024x768x24"
+pidfile="/var/run/xvfb.pid"
+
+depend() {
+    need net
+    use dns logger
+    after firewall
+}
+
+start_pre() {
+    checkpath --directory --owner root:root --mode 0755 /var/run/xvfb
+}
