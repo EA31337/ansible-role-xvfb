@@ -1,6 +1,8 @@
+# Python's requirements
+# Usage: pip install -r requirements.txt
 ansible
 ansible-lint
-docker
+docker>=7.1
 molecule
 molecule-docker
 pipenv
