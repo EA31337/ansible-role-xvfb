@@ -1,9 +1,7 @@
 ---
 # Vars file for xvfb role.
 xvfb_nixos_install_pkgs:
-  - name: psmisc
-    package: nixpkgs.psmisc
-  - name: supervisor
+  - name: python3.12-supervisor
     package: nixpkgs.python3Packages.supervisor
   # Note: xorg-server package provides: X Xephyr Xnest Xorg Xvfb gtf
   - name: xorg-server

@@ -5,7 +5,7 @@
   # Using killall in case supervisord is not running as a service.
   ansible.builtin.shell: |
     set -o pipefail
-    killall -HUP supervisord || supervisord -c /etc/supervisor/supervisord.conf
+    kill -HUP $(cat /var/run/supervisord.pid) || supervisord -c /etc/supervisor/supervisord.conf
   changed_when: true
   when: xvfb_service_enabled | bool
 
