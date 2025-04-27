@@ -31,6 +31,7 @@
               Xvfb service is not running but should be
               (state: {{ ansible_facts.services['xvfb.service'].state }})
           when:
+            - xvfb_service_enabled | default(true)
             - ansible_distribution != 'OtherLinux'
             - ansible_facts is defined
             - ansible_facts.services is defined
