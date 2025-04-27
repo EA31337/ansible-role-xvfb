@@ -4,6 +4,20 @@
   when: xvfb_service_enabled
   block:
 
+    - name: Ensures Xvfb profile is created
+      ansible.builtin.template:
+        dest: /etc/profile.d/10-xvfb.sh
+        mode: "0644"
+        src: profile-d-xvfb.j2
+
+    - name: Check for supervisor configuration files
+      ansible.builtin.stat:
+        path: "{{ item }}"
+      loop:
+        - /etc/supervisord.conf
+        - /etc/supervisor/supervisord.conf
+      register: supervisor_conf_files
+
     - name: Ensure necessary directories exist
       ansible.builtin.file:
         path: "{{ item }}"
@@ -12,19 +26,8 @@
       loop:
         - /etc/profile.d
         - /etc/supervisor/conf.d
-        - /var/log/supervisor
-        - /var/run
-
-    - name: Ensures Xvfb profile is created
-      ansible.builtin.template:
-        dest: /etc/profile.d/10-xvfb.sh
-        mode: "0644"
-        src: profile-d-xvfb.j2
-
-    - name: Check if supervisor configuration file exists
-      ansible.builtin.stat:
-        path: /etc/supervisor/supervisord.conf
-      register: supervisor_conf_file
+#       - /var/log/supervisor
+#       - /var/run
 
     - name: Create supervisor configuration file
       ansible.builtin.template:
@@ -32,7 +35,20 @@
         dest: /etc/supervisor/supervisord.conf
         mode: "0644"
       notify: Reload supervisord
-      when: not supervisor_conf_file.stat.exists
+      when: supervisor_conf_files.results | map(attribute='stat.exists') | select | list | length == 0
+
+    - name: Check for supervisor configuration files
+      ansible.builtin.stat:
+        path: "{{ item }}"
+      loop:
+        - /etc/supervisord.conf
+        - /etc/supervisor/supervisord.conf
+      register: supervisor_conf_files
+
+    - name: Sets the current supervisor configuration file fact
+      ansible.builtin.set_fact:
+        supervisor_conf_file: >-
+          {{ supervisor_conf_files.results | selectattr('stat.exists', 'true') | map(attribute='item') | first }}
 
     - name: Create Xvfb supervisor program configuration
       ansible.builtin.template:
@@ -41,6 +57,6 @@
         mode: "0644"
 
     - name: Start supervisor daemon
-      ansible.builtin.command: supervisord -c /etc/supervisor/supervisord.conf
+      ansible.builtin.command: supervisord -c "{{ supervisor_conf_file }}"
       args:
         creates: /var/run/supervisord.pid
