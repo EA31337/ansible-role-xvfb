@@ -8,9 +8,9 @@
   changed_when: true
   when: xvfb_service_enabled | bool
 
-- name: Xvfb service is started
+- name: Restart Xvfb service
   community.general.supervisorctl:
     name: xvfb
-    state: started
+    state: restarted
   changed_when: true
   when: xvfb_service_enabled | bool

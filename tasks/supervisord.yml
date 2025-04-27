@@ -42,7 +42,7 @@
         mode: "0644"
       notify:
         - All services are present
-        - Xvfb service is started
+        - Restart Xvfb service
       when: supervisor_conf_files.results | map(attribute='stat.exists') | select | list | length == 0
 
     - name: Read content of supervisor configuration file
