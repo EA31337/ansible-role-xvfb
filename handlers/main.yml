@@ -1,0 +1,12 @@
+---
+# Handlers file for xvfb role.
+
+- name: Reload supervisord
+  # Using killall in case supervisord is not running as a service.
+  ansible.builtin.command: killall -HUP supervisord
+  changed_when: true
+  when: xvfb_service_enabled | bool
+
+- name: Flush handlers
+  ansible.builtin.meta: flush_handlers
+  when: xvfb_service_enabled | bool
