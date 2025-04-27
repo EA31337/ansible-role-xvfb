@@ -22,7 +22,7 @@
 
     - name: Ensure packages are installed
       ansible.builtin.command: nix-env -iA {{ item.0.package }}
-      changed_when: pkg_install.rc == 0
+      changed_when: item.1.rc == 0
       loop: "{{ xvfb_nixos_install_pkgs | zip(pkg_check.results) | list }}"
       loop_control:
         label: "{{ item.0.name }}"
