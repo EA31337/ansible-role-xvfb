@@ -4,6 +4,17 @@
   when: xvfb_service_enabled
   block:
 
+    - name: Ensure necessary directories exist
+      ansible.builtin.file:
+        path: "{{ item }}"
+        state: directory
+        mode: "0755"
+      loop:
+        - /etc/profile.d
+        - /etc/supervisor
+        - /var/log/supervisor
+        - /var/run
+
     - name: Ensures Xvfb profile is created
       ansible.builtin.template:
         dest: /etc/profile.d/10-xvfb.sh
@@ -17,17 +28,6 @@
         - /etc/supervisord.conf
         - /etc/supervisor/supervisord.conf
       register: supervisor_conf_files
-
-    - name: Ensure necessary directories exist
-      ansible.builtin.file:
-        path: "{{ item }}"
-        state: directory
-        mode: "0755"
-      loop:
-        - /etc/profile.d
-        - /etc/supervisor/conf.d
-#       - /var/log/supervisor
-#       - /var/run
 
     - name: Create supervisor configuration file
       ansible.builtin.template:
@@ -50,13 +50,55 @@
         supervisor_conf_file: >-
           {{ supervisor_conf_files.results | selectattr('stat.exists', 'true') | map(attribute='item') | first }}
 
+    - name: Read content of supervisor configuration file
+      ansible.builtin.slurp:
+        src: "{{ supervisor_conf_file }}"
+      no_log: true
+      register: supervisor_conf_content
+
+    - name: Read include.files and pidfile from supervisor configuration file
+      ansible.builtin.set_fact:
+        supervisor_include_files: |
+          {{ ((supervisor_conf_content.content | b64decode | community.general.from_ini)['include'])['files']
+          | default('/etc/supervisor/conf.d') }}
+        supervisor_supervisord_pidfile: |
+          {{ ((supervisor_conf_content.content | b64decode | community.general.from_ini)['supervisord'])['pidfile']
+          | default('') }}
+
+    - name: Read include's dir and extension from supervisor configuration file
+      ansible.builtin.set_fact:
+        supervisor_include_files_dir: >-
+          {{ (supervisor_include_files.split('/')[:-1] | join('/'))
+          if (supervisor_include_files is defined) else '/etc/supervisor/conf.d' }}
+        supervisor_include_files_ext: >-
+          {{ supervisor_include_files.split('.')[-1]
+          if (supervisor_include_files is defined and '.' in supervisor_include_files) else 'conf' }}
+
+    - name: Ensure necessary supervisor directories exist
+      ansible.builtin.file:
+        path: "{{ item }}"
+        state: directory
+        mode: "0755"
+      loop:
+        - "{{ supervisor_include_files_dir }}"
+
     - name: Create Xvfb supervisor program configuration
       ansible.builtin.template:
         src: supervisord-xvfb-program.conf.j2
-        dest: /etc/supervisor/conf.d/xvfb.conf
+        dest: "{{ supervisor_include_files_dir }}/xvfb.{{ supervisor_include_files_ext }}"
         mode: "0644"
 
-    - name: Start supervisor daemon
+    - name: Check if supervisord is running
+      # noqa: command-instead-of-module - supervisorctl doesn't support checking for pid.
+      ansible.builtin.command: supervisorctl pid
+      changed_when: false
+      failed_when:
+        - supervisord_status.rc != 0
+        - supervisord_status.rc != 7
+      register: supervisord_status
+
+    - name: Start supervisord daemon
       ansible.builtin.command: supervisord -c "{{ supervisor_conf_file }}"
       args:
-        creates: /var/run/supervisord.pid
+        creates: "{{ supervisor_supervisord_pidfile | default('/var/run/supervisord.sock') }}"
+      when: supervisord_status.rc == 7
