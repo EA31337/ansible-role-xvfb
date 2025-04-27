@@ -3,7 +3,9 @@
 
 - name: Reload supervisord
   # Using killall in case supervisord is not running as a service.
-  ansible.builtin.command: killall -HUP supervisord
+  ansible.builtin.shell: |
+    set -o pipefail
+    killall -HUP supervisord || supervisord -c /etc/supervisor/supervisord.conf
   changed_when: true
   when: xvfb_service_enabled | bool
 
