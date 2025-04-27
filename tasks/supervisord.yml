@@ -98,5 +98,5 @@
     - name: Start supervisord daemon
       ansible.builtin.command: supervisord -c "{{ supervisor_conf_file }}"
       args:
-        creates: "{{ supervisor_supervisord_pidfile | default('/var/run/supervisord.sock') }}"
+        creates: "{{ supervisor_supervisord_pidfile | default('/var/run/supervisord.sock', true) }}"
       when: supervisord_status.rc == 7
