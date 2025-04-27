@@ -1,6 +1,13 @@
 ---
 # Handlers file for xvfb role.
 
+- name: All services are present
+  community.general.supervisorctl:
+    name: all
+    state: present
+  changed_when: true
+  when: xvfb_service_enabled | bool
+
 - name: Xvfb service is started
   community.general.supervisorctl:
     name: xvfb
