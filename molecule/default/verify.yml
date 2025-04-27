@@ -27,7 +27,9 @@
         - name: Assert Xvfb service is running
           ansible.builtin.assert:
             that: ansible_facts.services['xvfb.service'].state == 'running'
-            fail_msg: "Xvfb service is not running but should be"
+            fail_msg: >-
+              Xvfb service is not running but should be
+              (state: {{ ansible_facts.services['xvfb.service'].state }})
           when:
             - ansible_facts is defined
             - ansible_facts.services is defined
