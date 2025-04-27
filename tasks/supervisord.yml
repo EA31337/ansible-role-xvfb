@@ -31,6 +31,7 @@
         src: supervisord-xvfb.conf.j2
         dest: /etc/supervisor/supervisord.conf
         mode: "0644"
+      notify: Reload supervisord
       when: not supervisor_conf_file.stat.exists
 
     - name: Create Xvfb supervisor program configuration
