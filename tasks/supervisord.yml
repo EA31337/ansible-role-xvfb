@@ -54,11 +54,11 @@
     - name: Read include.files and pidfile from supervisor configuration file
       ansible.builtin.set_fact:
         supervisor_include_files: |
-          {{ ((supervisor_conf_content.content | b64decode | community.general.from_ini)['include'])['files']
-          | default('/etc/supervisor/conf.d') | trim }}
+          {{ (supervisor_conf_content.content | b64decode | community.general.from_ini).get('include', {})
+            .get('files', '/etc/supervisor/conf.d') }}
         supervisor_supervisord_pidfile: |
-          {{ ((supervisor_conf_content.content | b64decode | community.general.from_ini)['supervisord'])['pidfile']
-          | default('') | trim }}
+          {{ (supervisor_conf_content.content | b64decode | community.general.from_ini).get('supervisord', {})
+            .get('pidfile', '') }}
 
     - name: Read include's dir and extension from supervisor configuration file
       ansible.builtin.set_fact:
