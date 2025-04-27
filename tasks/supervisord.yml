@@ -34,7 +34,7 @@
         src: supervisord-xvfb.conf.j2
         dest: /etc/supervisor/supervisord.conf
         mode: "0644"
-      notify: Reload supervisord
+      notify: Xvfb service is started
       when: supervisor_conf_files.results | map(attribute='stat.exists') | select | list | length == 0
 
     - name: Check for supervisor configuration files
