@@ -1,7 +1,7 @@
 ---
 # Handlers file for xvfb role.
 
-- name: Reload supervisord
+- name: Xvfb service is started
   community.general.supervisorctl:
     name: xvfb
     state: started
