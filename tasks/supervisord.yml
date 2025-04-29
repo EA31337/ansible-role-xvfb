@@ -31,13 +31,13 @@
 
     - name: Sets the current supervisord configuration file fact
       ansible.builtin.set_fact:
-      supervisor_conf_file: >-
-        {{ supervisor_conf_files.results
-          | selectattr('stat.exists')
-          | map(attribute='item')
-          | first
-          | default('/etc/supervisor/supervisord.conf', true)
-          | trim }}
+        supervisor_conf_file: >-
+          {{ supervisor_conf_files.results
+            | selectattr('stat.exists')
+            | map(attribute='item')
+            | first
+            | default('/etc/supervisor/supervisord.conf', true)
+            | trim }}
 
     - name: Create supervisord configuration file
       ansible.builtin.template:
