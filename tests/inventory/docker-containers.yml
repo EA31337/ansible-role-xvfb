@@ -1,0 +1,15 @@
+---
+all:
+  hosts:
+    xvfb-on-ubuntu-latest:
+      ansible_connection: docker
+      ansible_host: xvfb-on-ubuntu-latest
+      ansible_python_interpreter: /usr/bin/python3
+    xvfb-on-ubuntu-noble:
+      ansible_connection: docker
+      ansible_host: xvfb-on-ubuntu-noble
+      ansible_python_interpreter: /usr/bin/python3
+    xvfb-on-ubuntu-jammy:
+      ansible_connection: docker
+      ansible_host: xvfb-on-ubuntu-jammy
+      ansible_python_interpreter: /usr/bin/python3
