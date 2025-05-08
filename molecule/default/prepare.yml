@@ -6,13 +6,13 @@
   tasks:
 
     - name: Update Apt cache (Debian/Ubuntu)
-      become: true
+      become: "{{ lookup('env', 'UID') | int != 0 }}"
       ansible.builtin.apt:
         update_cache: true
       when: ansible_os_family == 'Debian'
 
     - name: Ensures procps package is installed (Debian/Ubuntu)
-      become: true
+      become: "{{ ansible_user_id != 'root' }}"
       ansible.builtin.package:
         name: procps
         install_recommends: false

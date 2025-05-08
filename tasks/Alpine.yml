@@ -1,13 +1,13 @@
 ---
 - name: Ensures Xvfb package is installed
-  become: true
+  become: "{{ ansible_user_id != 'root' }}"
   community.general.apk:
     name: xvfb
     state: present
     update_cache: true
 
 - name: Ensures libx11 package is installed
-  become: true
+  become: "{{ ansible_user_id != 'root' }}"
   community.general.apk:
     name: libx11
     state: present
@@ -19,7 +19,7 @@
   block:
 
     - name: Ensure supervisor is installed
-      become: true
+      become: "{{ ansible_user_id != 'root' }}"
       community.general.apk:
         name: supervisor
         state: present
