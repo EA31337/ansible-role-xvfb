@@ -4,9 +4,21 @@
     "version": "2.0.0",
     "tasks": [
         {
-            "label": "ansible-lint: check syntax",
+            "label": "ansible-lint: check ",
             "type": "shell",
             "command": "ansible-lint",
+            "group": "test",
+            "presentation": {
+                "reveal": "always",
+                "panel": "new",
+                "focus": true
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "ansible-playbook: run test in containers",
+            "type": "shell",
+            "command": "ansible-playbook -i tests/inventory/docker-containers.yml tests/playbooks/docker-containers.yml",
             "group": "test",
             "presentation": {
                 "reveal": "always",
