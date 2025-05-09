@@ -4,6 +4,18 @@
     "version": "2.0.0",
     "tasks": [
         {
+            "label": "molecule: run test",
+            "type": "shell",
+            "command": "molecule test",
+            "group": "test",
+            "presentation": {
+                "reveal": "always",
+                "panel": "new",
+                "focus": true
+            },
+            "problemMatcher": []
+        },
+        {
             "label": "pre-commit: run all checks",
             "type": "shell",
             "command": "pre-commit run -a",
