@@ -1,9 +1,8 @@
 ---
 - name: Configure Docker container
-  hosts: docker_containers,!xvfb-on-nixos-latest
+  hosts: docker_containers
   gather_facts: false
   vars:
-    ansible_python_interpreter: /usr/bin/python3
     become_for_container: >-
       {{ (ansible_user_id is defined and ansible_user_id != 'root') or (lookup('env', 'UID') | int != 0) }}
     container_image_map:
