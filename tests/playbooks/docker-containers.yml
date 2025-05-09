@@ -1,6 +1,6 @@
 ---
 - name: Configure Docker container
-  hosts: docker_containers, !wine-on-nixos-latest
+  hosts: docker_containers, !xvfb-on-nixos-latest
   gather_facts: false
   vars:
     ansible_python_interpreter: /usr/bin/python3
