@@ -16,6 +16,18 @@
             "problemMatcher": []
         },
         {
+            "label": "molecule: syntax check",
+            "type": "shell",
+            "command": "molecule syntax",
+            "group": "test",
+            "presentation": {
+                "reveal": "always",
+                "panel": "new",
+                "focus": true
+            },
+            "problemMatcher": []
+        },
+        {
             "label": "pre-commit: run all checks",
             "type": "shell",
             "command": "pre-commit run -a",
