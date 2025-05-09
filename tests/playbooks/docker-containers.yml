@@ -1,6 +1,6 @@
 ---
 - name: Configure Docker container
-  hosts: docker_containers, !xvfb-on-nixos-latest
+  hosts: docker_containers,!xvfb-on-nixos-latest
   gather_facts: false
   vars:
     ansible_python_interpreter: /usr/bin/python3
@@ -37,6 +37,15 @@
       become_method: ansible.builtin.su
       changed_when: false
       when: container_image is search("alpine")
+
+    - name: Install Python 3 on NixOS
+      ansible.builtin.raw: >-
+        test -e "{{ ansible_python_interpreter }}"
+        || (nix-env -iA nixpkgs.python3 nixpkgs.python3Packages.pip)
+      become: "{{ (ansible_user_id is defined and ansible_user_id != 'root') or (lookup('env', 'UID') | int != 0) }}"
+      become_method: ansible.builtin.su
+      changed_when: false
+      when: container_image is search("nixos")
 
     - name: Install Python 3 on Ubuntu/Debian
       ansible.builtin.raw: >-
