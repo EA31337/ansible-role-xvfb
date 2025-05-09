@@ -4,9 +4,19 @@
     "version": "2.0.0",
     "tasks": [
         {
-            "label": "echo",
+            "label": "pre-commit: run all checks",
             "type": "shell",
-            "command": "echo Hello"
+            "command": "pre-commit run -a",
+            "group": {
+                "kind": "test",
+                "isDefault": true
+            },
+            "presentation": {
+                "reveal": "always",
+                "panel": "new",
+                "focus": true
+            },
+            "problemMatcher": []
         }
     ]
 }
