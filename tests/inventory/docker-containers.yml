@@ -1,0 +1,29 @@
+---
+all:
+  children:
+    docker_containers:
+      hosts:
+        xvfb-on-ubuntu-latest:
+          ansible_connection: docker
+          ansible_host: xvfb-on-ubuntu-latest
+          ansible_python_interpreter: /usr/bin/python3
+        xvfb-on-ubuntu-noble:
+          ansible_connection: docker
+          ansible_host: xvfb-on-ubuntu-noble
+          ansible_python_interpreter: /usr/bin/python3
+        xvfb-on-ubuntu-jammy:
+          ansible_connection: docker
+          ansible_host: xvfb-on-ubuntu-jammy
+          ansible_python_interpreter: /usr/bin/python3
+        xvfb-on-debian-latest:
+          ansible_connection: docker
+          ansible_host: xvfb-on-debian-latest
+          ansible_python_interpreter: /usr/bin/python3
+        xvfb-on-alpine-latest:
+          ansible_connection: docker
+          ansible_host: xvfb-on-alpine-latest
+          ansible_python_interpreter: /usr/bin/python3
+        xvfb-on-nixos-latest:
+          ansible_connection: docker
+          ansible_host: xvfb-on-nixos-latest
+          ansible_python_interpreter: /nix/var/nix/profiles/default/bin/python3

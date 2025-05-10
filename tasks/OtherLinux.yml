@@ -4,52 +4,30 @@
     path: /nix/store
   register: nix_store_stat
 
-- name: Ensure Xvfb is installed
+- name: Ensure required packages are installed
   become: "{{ ansible_user_id != 'root' }}"
+  when: nix_store_stat.stat.exists
   block:
 
-    - name: Check if Xorg is already installed
-      ansible.builtin.shell:
-        cmd: |
-          set -o pipefail
-          nix-env -q | grep -q xorg-server
+    - name: Check if packages are already installed
+      ansible.builtin.command:
+        cmd: nix-env -q | grep -xq ^{{ item.name }}
       changed_when: false
-      failed_when: xorg_check.rc not in [0, 1]
-      register: xorg_check
-      when: nix_store_stat.stat.exists
+      failed_when: pkg_check.rc not in [0, 1]
+      loop: "{{ xvfb_nixos_install_pkgs }}"
+      register: pkg_check
 
-    # Note: xorg-server package provides: X Xephyr Xnest Xorg Xvfb gtf
-    - name: Ensure Xorg package is installed on Nix image
-      ansible.builtin.command: nix-env -iA nixpkgs.xorg.xorgserver
+    - name: Ensure packages are installed
+      ansible.builtin.command: nix-env -iA {{ item.0.package }}
+      changed_when: item.1.rc == 0
+      loop: "{{ xvfb_nixos_install_pkgs | zip(pkg_check.results) | list }}"
+      loop_control:
+        label: "{{ item.0.name }}"
+      register: pkg_install
       when:
-        - nix_store_stat.stat.exists
-        - xorg_check.rc != 0
-      register: xorg_install
-      changed_when: xorg_install.rc == 0
+        - item.1.rc is defined
+        - item.1.rc != 0
 
-- name: Ensure Xvfb is service installed
-  become: "{{ ansible_user_id != 'root' }}"
-  when: xvfb_service_enabled
-  block:
-
-    - name: Check if supervisor is already installed
-      ansible.builtin.shell:
-        cmd: |
-          set -o pipefail
-          nix-env -q | grep -q supervisor
-      changed_when: false
-      failed_when: supervisor_check.rc not in [0, 1]
-      register: supervisor_check
-      when: nix_store_stat.stat.exists
-
-    - name: Ensure supervisor is installed
-      ansible.builtin.command: nix-env -iA nixpkgs.python3Packages.supervisor
-      when:
-        - nix_store_stat.stat.exists
-        - supervisor_check.rc != 0
-      register: supervisor_install
-      changed_when: supervisor_install.rc == 0
-
-    - name: Include configuration tasks for supervisor
-      ansible.builtin.include_tasks:
-        file: supervisord.yml
+- name: Include configuration tasks for supervisor
+  ansible.builtin.include_tasks:
+    file: supervisord.yml

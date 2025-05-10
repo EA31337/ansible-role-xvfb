@@ -3,3 +3,9 @@
   ansible.builtin.include_tasks:
     file: "{{ ansible_os_family }}.yml"
   tags: xvfb
+
+- name: Get supervisord status for Xvfb
+  community.general.supervisorctl:
+    name: xvfb
+    state: present
+  when: xvfb_service_enabled | bool
