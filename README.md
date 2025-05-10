@@ -41,6 +41,7 @@ Steps to test role on Docker containers.
 1. Install the current role by running the following commands in shell:
 
     ```shell
+    ansible-galaxy install -r requirements.yml
     jinja2 requirements-local.yml.j2 -D "pwd=$PWD" -o requirements-local.yml
     ansible-galaxy install -r requirements-local.yml
     ```
