@@ -27,8 +27,12 @@
         - name: Assert Xvfb service is running
           ansible.builtin.assert:
             that: ansible_facts.services['xvfb.service'].state == 'running'
-            fail_msg: "Xvfb service is not running but should be"
+            fail_msg: >-
+              Xvfb service is not running but should be
+              (state: {{ ansible_facts.services['xvfb.service'].state }})
           when:
+            - xvfb_service_enabled | default(true)
+            - ansible_distribution != 'OtherLinux'
             - ansible_facts is defined
             - ansible_facts.services is defined
             - "'xvfb.service' in ansible_facts.services"
@@ -37,4 +41,3 @@
           community.general.supervisorctl:
             name: xvfb
             state: present
-          when: ansible_distribution == 'OtherLinux'

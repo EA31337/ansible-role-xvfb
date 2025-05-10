@@ -5,13 +5,15 @@ name: Molecule
 on:
   pull_request:
     paths-ignore:
-      - '**.md'
-      - '*.yaml'
+      - '**/*.cfg'
+      - '**/*.md'
+      - '**/.*'
       - Pipfile*
   push:
     paths-ignore:
-      - '**.md'
-      - '*.yaml'
+      - '**/*.cfg'
+      - '**/*.md'
+      - '**/.*'
       - Pipfile*
 
 jobs:

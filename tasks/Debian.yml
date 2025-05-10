@@ -5,7 +5,7 @@
     name: xvfb
     state: present
     update_cache: !!str yes
-  become: true
+  become: "{{ ansible_user_id != 'root' }}"
 
 - name: Ensure Xvfb is service installed
   become: "{{ ansible_user_id != 'root' }}"
@@ -13,7 +13,6 @@
   block:
 
     - name: Ensure supervisor is installed
-      become: true
       ansible.builtin.apt:
         name: supervisor
         state: present
