@@ -6,3 +6,5 @@ xvfb_nixos_install_pkgs:
   # Note: xorg-server package provides: X Xephyr Xnest Xorg Xvfb gtf
   - name: xorg-server
     package: nixpkgs.xorg.xorgserver
+xvfb_role_fact:
+  xvfb_package_installed: false

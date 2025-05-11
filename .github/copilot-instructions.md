@@ -42,6 +42,7 @@ You are expected to be an expert in:
 Ensure enforcing the following rules:
 
 - fqcn[keyword]: Avoid `collections` keyword by using FQCN for all plugins, modules, roles and playbooks
+- key-order[task]: You can improve the task key order to: name, tags, block
 
 ## YAML Guidelines
 

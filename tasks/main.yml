@@ -3,6 +3,7 @@
   ansible.builtin.include_tasks:
     file: "{{ ansible_os_family }}.yml"
   tags: xvfb
+  when: xvfb_role_fact.get('xvfb_package_installed', false) | bool
 
 - name: Get supervisord status for Xvfb
   community.general.supervisorctl:

@@ -1,0 +1,43 @@
+---
+- name: Load custom Xvfb role facts
+  tags: read-role-facts
+  block:
+    - name: Read custom role facts from ~/.ansible/facts/{{ role_name | default('xvfb') }}
+      ansible.builtin.set_fact:
+        role_custom_facts: >-
+          {{ lookup('ansible.builtin.file',
+            ansible_env.HOME + '/.ansible/facts/' + (role_name | default('xvfb'))
+          ) | from_yaml }}
+      when:
+        - ansible_env.HOME is defined
+        - (ansible_env.HOME + '/.ansible/facts/' + (role_name | default('xvfb'))) is file
+
+    - name: Show loaded custom facts
+      ansible.builtin.debug:
+        var: role_custom_facts
+      when: role_custom_facts is defined
+
+- name: Write custom Xvfb role facts
+  tags: write-role-facts
+  block:
+    - name: Ensure facts directory exists
+      ansible.builtin.file:
+        path: "{{ ansible_env.HOME }}/.ansible/facts"
+        state: directory
+        mode: "0700"
+
+    - name: Write custom role facts to ~/.ansible/facts/{{ role_name | default('xvfb') }}
+      ansible.builtin.copy:
+        content: "{{ role_custom_facts | to_nice_yaml }}"
+        dest: "{{ ansible_env.HOME }}/.ansible/facts/{{ role_name | default('xvfb') }}"
+        mode: "0600"
+      when:
+        - ansible_env.HOME is defined
+        - role_custom_facts is defined
+
+    - name: Wrote custom facts
+      ansible.builtin.debug:
+        msg: "Custom facts written to {{ ansible_env.HOME }}/.ansible/facts/{{ role_name | default('xvfb') }}"
+      when:
+        - ansible_env.HOME is defined
+        - role_custom_facts is defined
