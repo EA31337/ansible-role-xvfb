@@ -49,20 +49,15 @@
         - Restart Xvfb service
       when: supervisor_conf_files.results | map(attribute='stat.exists') | select | list | length == 0
 
-    - name: Read content of supervisor configuration file
-      ansible.builtin.slurp:
-        src: "{{ supervisor_conf_file }}"
-      no_log: true
-      register: supervisor_conf_content
+    - name: Parse supervisor configuration file
+      community.general.read_ini:
+        path: "{{ supervisor_conf_file }}"
+      register: supervisor_ini
 
-    - name: Read include.files and pidfile from supervisor configuration file
+    - name: Set include.files and pidfile facts
       ansible.builtin.set_fact:
-        supervisor_include_files: |
-          {{ (supervisor_conf_content.content | b64decode | community.general.from_ini).get('include', {})
-            .get('files', '/etc/supervisor/conf.d') }}
-        supervisor_supervisord_pidfile: |
-          {{ (supervisor_conf_content.content | b64decode | community.general.from_ini).get('supervisord', {})
-            .get('pidfile', '') }}
+        supervisor_include_files: "{{ supervisor_ini['ini']['include']['files'] | default('/etc/supervisor/conf.d') }}"
+        supervisor_supervisord_pidfile: "{{ supervisor_ini['ini']['supervisord']['pidfile'] | default('') }}"
 
     - name: Read include's dir and extension from supervisor configuration file
       ansible.builtin.set_fact:
