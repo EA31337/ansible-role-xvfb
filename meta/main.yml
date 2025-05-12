@@ -18,10 +18,9 @@ galaxy_info:
     - graphics
     - gui
     - linux
-    - ubuntu
     - supervisor
     - system
-  issue_tracker_url: https://github.com/EA31337/ansible-role-xvfb
+    - ubuntu
   license: GPLv3
   min_ansible_version: "2.7"
   namespace: ea31337
