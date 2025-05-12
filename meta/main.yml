@@ -5,7 +5,8 @@ collections:
   - community.general
 dependencies: []
 galaxy_info:
-  author: EA31337 Ltd
+  author: kenorb
+  company: EA31337 Ltd
   description: |
     Role to install Xvfb and configure as service using supervisord.
   galaxy_tags:
