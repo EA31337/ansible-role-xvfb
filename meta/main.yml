@@ -1,16 +1,23 @@
+# Documentation: https://docs.ansible.com/ansible/latest/dev_guide/collections_galaxy_meta.html
 ---
 galaxy_info:
-  author: EA31337 Ltd
+  author: kenorb
+  company: EA31337 Ltd
   description: |
-    Role to install Xvfb.
+    Role to install Xvfb and configure as service using supervisord.
   galaxy_tags:
-    - emulator
+    - daemon
+    - desktop
+    - development
+    - docker
     - games
     - graphics
+    - gui
     - linux
-    - windows
-  issue_tracker_url: https://github.com/EA31337/ansible-role-xvfb
-  license: GPLv3
+    - supervisor
+    - system
+    - ubuntu
+  license: GPL-3.0-or-later
   min_ansible_version: "2.7"
   namespace: ea31337
   platforms:
@@ -20,7 +27,20 @@ galaxy_info:
     - name: Debian
       versions:
         - all
+        - bullseye
+        - buster
+        - jessie
+        - stretch
+        - wheezy
+    # - name: NixOS
+    #   versions:
+    #     - all
     - name: Ubuntu
       versions:
         - all
+        - artful
+        - bionic
+        - focal
+        - trusty
+        - xenial
   role_name: xvfb
