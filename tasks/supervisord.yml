@@ -78,12 +78,25 @@
     - name: Read include's dir and extension from supervisor configuration file
       ansible.builtin.set_fact:
         supervisor_include_files_dir: >-
-          {{ (supervisor_include_files.split('/')[:-1] | join('/'))
-          if (supervisor_include_files is defined) else '/etc/supervisor/conf.d' | trim }}
+          {% raw %}
+          {% set path = supervisor_include_files | default('/etc/supervisor/conf.d') | trim %}
+          {% if '/' in path %}
+          {{ path.split('/')[:-1] | join('/') }}
+          {% else %}
+          /etc/supervisor/conf.d
+          {% endif %}
+          {% endraw %}
         supervisor_include_files_ext: >-
-          {{ supervisor_include_files.split('.')[-1]
-          if (supervisor_include_files is defined and '.' in supervisor_include_files) else 'conf' | trim }}
-
+          {% raw %}
+          {% set path = supervisor_include_files | default('/etc/supervisor/conf.d') | trim %}
+          {% if '*.' in path %}
+          {{ path.split('*.')[1] }}
+          {% elif '.' in path.split('/')[-1] %}
+          {{ path.split('/')[-1].split('.')[-1] }}
+          {% else %}
+          conf
+          {% endif %}
+          {% endraw %}
     - name: Ensure necessary supervisor directories exist
       ansible.builtin.file:
         path: "{{ item }}"
