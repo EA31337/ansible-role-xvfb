@@ -27,13 +27,20 @@ galaxy_info:
     - name: Debian
       versions:
         - all
-        # - "6.1" . # Refs: https://github.com/ansible/ansible-lint/issues/4603
+        - bullseye
+        - buster
+        - jessie
+        - stretch
+        - wheezy
     # - name: NixOS
     #   versions:
     #     - all
     - name: Ubuntu
       versions:
         - all
-        # - 22.04
-        # - 24.04
+        - artful
+        - bionic
+        - focal
+        - trusty
+        - xenial
   role_name: xvfb
