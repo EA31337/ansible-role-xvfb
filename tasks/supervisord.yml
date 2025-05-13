@@ -54,36 +54,25 @@
         path: "{{ supervisor_conf_file }}"
       register: supervisor_conf_content
 
-    - name: Set include.files and pidfile facts with robust regex handling
+    - name: Read include.files and pidfile from supervisor configuration file
       ansible.builtin.set_fact:
-        supervisor_include_files: >-
-              {% raw %}
-              {% set include_match = supervisor_conf_content.content | b64decode |
-              regex_findall('\[include\].*?files\s*=\s*([^\n\r]*)', multiline=True) %}
-              {% if include_match %}
-              {{ include_match[0] | trim }}
-              {% else %}
-              /etc/supervisor/conf.d
-              {% endif %}
-              {% endraw %}
-        supervisor_supervisord_pidfile: >-
-              {% raw %}
-              {% set pidfile_match = supervisor_conf_content.content | b64decode |
-              regex_findall('\[supervisord\].*?pidfile\s*=\s*([^\n\r]*)', multiline=True) %}
-              {% if pidfile_match %}
-              {{ pidfile_match[0] | trim }}
-              {% else %}
-              {% endif %}
-              {% endraw %}
+        supervisor_include_files: |
+          {{ (supervisor_conf_content.content | b64decode | community.general.from_ini).get('include', {})
+            .get('files', '/etc/supervisor/conf.d') }}
+        supervisor_supervisord_pidfile: |
+          {{ (supervisor_conf_content.content | b64decode | community.general.from_ini).get('supervisord', {})
+            .get('pidfile', '') }}
+
     - name: Read include's dir and extension from supervisor configuration file
       ansible.builtin.set_fact:
         supervisor_include_files_dir: >-
           {{ (supervisor_include_files.split('/')[:-1] | join('/'))
-          if (supervisor_include_files is defined) else '/etc/supervisor/conf.d' | trim }}
+          if (supervisor_include_files is defined)
+          else '/etc/supervisor/conf.d' | trim }}
         supervisor_include_files_ext: >-
           {{ supervisor_include_files.split('.')[-1]
-          if (supervisor_include_files is defined and '.' in supervisor_include_files) else 'conf' | trim }}
-
+          if (supervisor_include_files is defined and '.' in supervisor_include_files)
+          else 'conf' | trim | replace('\n', '') }}
     - name: Ensure necessary supervisor directories exist
       ansible.builtin.file:
         path: "{{ item }}"
