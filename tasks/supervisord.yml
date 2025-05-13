@@ -51,7 +51,7 @@
 
     - name: Read supervisor configuration file content
       ansible.builtin.slurp:
-        path: "{{ supervisor_conf_file }}"
+        src: "{{ supervisor_conf_file }}"
       register: supervisor_conf_content
 
     - name: Read include.files and pidfile from supervisor configuration file
