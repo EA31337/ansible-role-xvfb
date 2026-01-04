@@ -23,7 +23,8 @@ platforms:
     image: debian:latest
   - name: nixos-latest
     dockerfile: ../resources/playbooks/Dockerfile.j2
-    image: nixos/nix:latest
+    image: xvfb-nixos:latest
+    base_image: nixos/nix:latest
     pre_build_image: false
   - name: ubuntu-jammy
     image: ubuntu:jammy
@@ -46,6 +47,7 @@ provisioner:
   inventory:
     group_vars:
       all:
+        ansible_python_interpreter: auto_silent
       #  ansible_user: nobody
     host_vars:
       nixos-latest:
