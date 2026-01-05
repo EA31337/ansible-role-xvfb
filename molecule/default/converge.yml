@@ -6,7 +6,7 @@
     - name: Set ansible_os_family for NixOS hosts
       ansible.builtin.set_fact:
         ansible_os_family: NixOS
-      when: ansible_distribution == 'NixOS' or 'nixos' in (inventory_hostname | lower)
+      when: (ansible_distribution == 'NixOS') or ('nixos' in (inventory_hostname | lower))
   roles:
     - role: ea31337.xvfb
   vars:
