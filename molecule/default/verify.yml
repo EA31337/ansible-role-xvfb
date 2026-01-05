@@ -21,7 +21,7 @@
               (state: {{ ansible_facts.services['xvfb.service'].state }})
           when:
             - xvfb_service_enabled | default(true)
-            - ansible_distribution != 'OtherLinux'
+            - ansible_distribution != 'NixOS'
             - ansible_facts is defined
             - ansible_facts.services is defined
             - "'xvfb.service' in ansible_facts.services"
