@@ -1,20 +1,40 @@
 ---
-- name: Prepare
-  hosts: all
-  gather_facts: true
-
+- name: Prepare hosts
+  hosts: "all:!nixos*"
+  gather_facts: false
   tasks:
 
-    - name: Update Apt cache (Debian/Ubuntu)
-      become: "{{ lookup('env', 'UID') | int != 0 }}"
-      ansible.builtin.apt:
-        update_cache: true
-      when: ansible_os_family == 'Debian'
+    - name: Install Python for Ansible
+      ansible.builtin.raw: |
+        if command -v python3 || command -v python; then
+          exit 0
+        elif command -v apk; then
+          apk add --no-cache python3 py3-pip
+        elif command -v apt; then
+          apt -y update && apt install -y python3-minimal
+        elif command -v dnf; then
+          dnf install -y python3
+        elif command -v zypper; then
+          zypper --non-interactive install python3
+        else
+          echo "No supported package manager found" >&2
+          exit 1
+        fi
+      changed_when: false
 
-    - name: Ensures procps package is installed (Debian/Ubuntu)
-      become: "{{ ansible_user_id != 'root' }}"
-      ansible.builtin.package:
-        name: procps
-        install_recommends: false
-        state: present
-      when: ansible_distribution == 'Debian'
+- name: Prepare NixOS hosts
+  hosts: "nixos*"
+  gather_facts: false
+  tasks:
+
+    - name: Install Python for Ansible on NixOS
+      ansible.builtin.raw: |
+        if command -v python3 || command -v python; then
+          exit 0
+        fi
+        mkdir -p /etc/nix
+        printf "sandbox = false\n" > /etc/nix/nix.conf
+        export NIX_CONFIG="sandbox = false"
+        nix-env --option sandbox false \
+          -iA nixpkgs.python3 nixpkgs.python3Packages.pip
+      changed_when: false
