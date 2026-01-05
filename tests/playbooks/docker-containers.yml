@@ -120,8 +120,6 @@
       xvfb-on-ubuntu-latest: ubuntu:latest
       xvfb-on-ubuntu-noble: ubuntu:noble
     container_image: "{{ container_image_map[inventory_hostname] | default('ubuntu:latest') }}"
-  vars_files:
-    - ../../vars/main.yml
 
 - name: Install ea31337.xvfb role on all containers
   hosts: docker_containers
