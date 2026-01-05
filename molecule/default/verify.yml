@@ -1,6 +1,8 @@
 ---
 - name: Verify
   hosts: all
+  vars_files:
+    - ../../defaults/main.yml
   tasks:
 
     - name: Verify Xvfb command
