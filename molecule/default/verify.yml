@@ -7,15 +7,9 @@
       changed_when: false
       ansible.builtin.command: which Xvfb
 
-    - name: Check if Xvfb is managed by supervisord
+    - name: Check if Xvfb service is running
       when: xvfb_service_enabled | default(true)
       block:
-        - name: Get supervisord status for Xvfb
-          community.general.supervisorctl:
-            name: xvfb
-            state: present
-          register: supervisord_xvfb_status
-
         - name: Check Xvfb service status
           ansible.builtin.service_facts:
 
