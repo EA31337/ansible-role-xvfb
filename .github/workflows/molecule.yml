@@ -5,15 +5,19 @@ name: Molecule
 on:
   pull_request:
     paths-ignore:
-      - '**/*.cfg'
-      - '**/*.md'
+      - '!.github/workflows/**'
+      - '**.cfg'
+      - '**.md'
       - '.*'
+      - LICENSE
       - Pipfile*
   push:
     paths-ignore:
-      - '**/*.cfg'
-      - '**/*.md'
+      - '!.github/workflows/**'
+      - '**.cfg'
+      - '**.md'
       - '.*'
+      - LICENSE
       - Pipfile*
 
 jobs:
@@ -32,7 +36,8 @@ jobs:
       - uses: gofrolist/molecule-action@v2
         env:
           ANSIBLE_FORCE_COLOR: '1'
-          ANSIBLE_STDOUT_CALLBACK: ${{ runner.debug == '1' && 'debug' || 'yaml' }}
+          ANSIBLE_STDOUT_CALLBACK: ${{ runner.debug == '1' && 'debug' || 'ansible.builtin.default' }}
+          ANSIBLE_CALLBACK_RESULT_FORMAT: yaml
           MOLECULE_REPORT: molecule-${{ matrix.scenario }}-report.html
         with:
           molecule_args: --scenario-name ${{ matrix.scenario }}
