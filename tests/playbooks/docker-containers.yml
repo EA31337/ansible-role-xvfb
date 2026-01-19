@@ -127,6 +127,11 @@
   tags: always
   vars:
     controller_python: "{{ ansible_playbook_python }}"
+  pre_tasks:
+    - name: Set ansible_os_family for NixOS hosts
+      ansible.builtin.set_fact:
+        ansible_os_family: NixOS
+      when: (ansible_distribution == 'NixOS') or ('nixos' in (inventory_hostname | lower))
   tasks:
     - name: Installs ea31337.xvfb role
       ansible.builtin.import_role:
