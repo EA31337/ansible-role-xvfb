@@ -1,5 +1,7 @@
 # Documentation: https://docs.ansible.com/ansible/latest/dev_guide/collections_galaxy_meta.html
+# Note: Ensure the list is sorted alphabetically.
 ---
+dependencies: []
 galaxy_info:
   author: kenorb
   company: EA31337 Ltd
@@ -29,18 +31,14 @@ galaxy_info:
         - all
         - bullseye
         - buster
-        - jessie
         - stretch
-        - wheezy
     # - name: NixOS
     #   versions:
     #     - all
     - name: Ubuntu
       versions:
         - all
-        - artful
         - bionic
         - focal
-        - trusty
         - xenial
   role_name: xvfb

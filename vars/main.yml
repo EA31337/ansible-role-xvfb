@@ -1,5 +1,6 @@
 ---
 # Vars file for xvfb role.
+# Note: Keep YAML keys sorted alphabetically.
 xvfb_nixos_install_pkgs:
   - name: python3.12-supervisor
     package: nixpkgs.python3Packages.supervisor
