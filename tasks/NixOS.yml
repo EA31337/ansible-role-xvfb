@@ -5,7 +5,7 @@
   register: nix_store_stat
 
 - name: Ensure required packages are installed
-  become: "{{ ansible_user_id != 'root' }}"
+  become: "{{ ansible_facts['user_id'] != 'root' }}"
   when: nix_store_stat.stat.exists
   block:
 
