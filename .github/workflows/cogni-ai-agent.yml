@@ -73,10 +73,7 @@ jobs:
           key: ${{ runner.os }}-pip-${{ hashFiles('.devcontainer/requirements.txt') }}
       - name: Install Python dependencies
         if: steps.python-user-site.outputs.cache-hit != 'true'
-        run: |
-          if [ -f .devcontainer/requirements.txt ]; then
-            python -m pip install --user -r .devcontainer/requirements.txt
-          fi
+        run: python -m pip install --user -r .devcontainer/requirements.txt
       - name: Ensure local bin on PATH
         run: echo "$HOME/.local/bin" >> "$GITHUB_PATH"
       # See: <https://github.com/Cogni-AI-OU/cogni-ai-agent-action>
