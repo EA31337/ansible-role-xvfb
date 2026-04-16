@@ -42,6 +42,7 @@ provisioner:
       stdout_callback: ansible.builtin.default
       verbosity: 1
   env:
+    ANSIBLE_ALLOW_BROKEN_CONDITIONALS: "true"
     ANSIBLE_FORCE_COLOR: "1"
     ANSIBLE_LOAD_CALLBACK_PLUGINS: "1"
   inventory:
