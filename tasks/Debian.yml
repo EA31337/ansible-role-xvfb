@@ -6,6 +6,8 @@
     state: present
     update_cache: !!str yes
   become: "{{ ansible_user_id != 'root' }}"
+  environment:
+    DEBIAN_FRONTEND: noninteractive
 
 - name: Ensure Xvfb is service installed
   become: "{{ ansible_user_id != 'root' }}"
@@ -17,6 +19,8 @@
         name: supervisor
         state: present
         update_cache: true
+      environment:
+        DEBIAN_FRONTEND: noninteractive
 
     - name: Include configuration tasks for supervisor
       ansible.builtin.include_tasks:
@@ -29,3 +33,5 @@
     purge: !!str yes
     update_cache: !!str yes
   become: "{{ ansible_user_id != 'root' }}"
+  environment:
+    DEBIAN_FRONTEND: noninteractive
