@@ -35,7 +35,8 @@ jobs:
           - nixos-latest
           - ubuntu-jammy
           - ubuntu-noble
-          - ubuntu-latest
+    env:
+      MOLECULE_REPORT: molecule-${{ matrix.scenario }}-${{ matrix.platform }}-report.html
     steps:
       - uses: actions/checkout@v4
         with:
@@ -45,7 +46,6 @@ jobs:
           ANSIBLE_FORCE_COLOR: '1'
           ANSIBLE_STDOUT_CALLBACK: ${{ runner.debug == '1' && 'debug' || 'ansible.builtin.default' }}
           ANSIBLE_CALLBACK_RESULT_FORMAT: yaml
-          MOLECULE_REPORT: molecule-${{ matrix.scenario }}-${{ matrix.platform }}-report.html
         with:
           molecule_args: --scenario-name ${{ matrix.scenario }} --platform-name ${{ matrix.platform }}
           molecule_command: test
@@ -54,14 +54,14 @@ jobs:
       - if: always()
         name: Ensure report file permissions are correct
         run: |
-          sudo touch molecule-${{ matrix.scenario }}-${{ matrix.platform }}-report.html
-          sudo chmod 644 molecule-${{ matrix.scenario }}-${{ matrix.platform }}-report.html
+          sudo touch "${MOLECULE_REPORT}"
+          sudo chmod 644 "${MOLECULE_REPORT}"
         working-directory: ${{ github.repository }}
       - if: always()
         name: Converts test report
         uses: patrick-werner/fhir-html-validation-to-markdown@1.0.0
         with:
-          input_file: ${{ github.repository }}/molecule-${{ matrix.scenario }}-${{ matrix.platform }}-report.html
+          input_file: ${{ github.repository }}/${{ env.MOLECULE_REPORT }}
       # Debug with tmate on failure when debug logging is enabled.
       - if: ${{ failure() && runner.debug == '1' }}
         uses: mxschmitt/action-tmate@v3

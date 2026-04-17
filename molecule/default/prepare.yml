@@ -11,7 +11,11 @@
         elif command -v apk; then
           apk add --no-cache python3 py3-pip
         elif command -v apt; then
-          apt -y update && apt install -y python3-minimal
+          if [ -f /etc/os-release ] && grep -qi '^ID=ubuntu' /etc/os-release; then
+            sed -i -e 's|http://archive.ubuntu.com/ubuntu|http://azure.archive.ubuntu.com/ubuntu|g' \
+              -e 's|http://security.ubuntu.com/ubuntu|http://azure.archive.ubuntu.com/ubuntu|g' /etc/apt/sources.list
+          fi
+          DEBIAN_FRONTEND=noninteractive apt -y update && DEBIAN_FRONTEND=noninteractive apt install -y python3-minimal
         elif command -v dnf; then
           dnf install -y python3
         elif command -v zypper; then
