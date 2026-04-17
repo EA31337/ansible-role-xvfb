@@ -40,7 +40,7 @@
   become: >-
     {{ (connection_user is defined and connection_user != 'root')
     or (ansible_user_id is defined and ansible_user_id != 'root')
-    or (lookup('env', 'UID') | int != 0)
+    or (ansible_env is defined and (ansible_env.UID is defined) and (ansible_env.UID | int) != 0)
     }}
   # Use su as become_method as sudo is not available in all containers.
   become_method: ansible.builtin.su
