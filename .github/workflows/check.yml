@@ -145,7 +145,7 @@ jobs:
               MATCHER_PATH=".github-matchers/.github/pre-commit-matcher.json"
             fi
           else
-            MATCHER_PATH=".github/actionlint-matcher.json"
+            MATCHER_PATH=".github/pre-commit-matcher.json"
           fi
           if [ -f "$MATCHER_PATH" ]; then
             echo "::add-matcher::$MATCHER_PATH"
