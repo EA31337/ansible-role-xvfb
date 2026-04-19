@@ -27,7 +27,7 @@
       ansible.builtin.copy:
         content: ""
         dest: "{{ nixos_dockerfile_output | dirname }}/custom-ca.crt"
-        force: false
+        force: true
         mode: "0644"
       when: "'xvfb-on-nixos-latest' in groups['docker_containers']"
 
