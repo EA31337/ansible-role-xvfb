@@ -11,4 +11,5 @@ collections
 __pycache__
 requirements-local.yml
 *.swp
+*.txt
 *.verb
