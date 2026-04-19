@@ -1,5 +1,6 @@
 # Ansible Role: Xvfb
 
+[![CI](https://github.com/EA31337/ansible-role-xvfb/actions/workflows/molecule.yml/badge.svg)](https://github.com/EA31337/ansible-role-xvfb/actions/workflows/molecule.yml)
 [![GitHub pull requests](https://img.shields.io/github/issues-pr/EA31337/ansible-role-xvfb)](https://github.com/EA31337/ansible-role-xvfb/pulls)
 [![License](https://img.shields.io/badge/license-GPLv3-brightgreen.svg)](LICENSE)
 
