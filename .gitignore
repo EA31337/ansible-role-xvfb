@@ -1,6 +1,7 @@
 .ansible
 ansible-role-*
 collections
+custom-ca.crt
 *.bak
 .cache
 *.html
