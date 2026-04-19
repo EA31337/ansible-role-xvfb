@@ -41,11 +41,29 @@ jobs:
       - uses: actions/checkout@v4
         with:
           path: ${{ github.repository }}
+      - name: Cache Ansible collections
+        uses: actions/cache@v4
+        with:
+          path: ${{ github.repository }}/collections
+          key: ${{ runner.os }}-ansible-collections-${{ hashFiles(format('{0}/requirements.yml', github.repository)) }}
+      - name: Cache pip
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles(format('{0}/Pipfile*', github.repository)) }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+      - name: Install Ansible collections
+        run: |
+          pip install 'ansible-core~=2.17.0'
+          ansible-galaxy collection install -r requirements.yml -p collections
+        working-directory: ${{ github.repository }}
       - uses: gofrolist/molecule-action@v2
         env:
           ANSIBLE_FORCE_COLOR: '1'
           ANSIBLE_STDOUT_CALLBACK: ${{ runner.debug == '1' && 'debug' || 'ansible.builtin.default' }}
           ANSIBLE_CALLBACK_RESULT_FORMAT: yaml
+          ANSIBLE_COLLECTIONS_PATH: ${{ github.workspace }}/${{ github.repository }}/collections
         with:
           molecule_args: --scenario-name ${{ matrix.scenario }} --platform-name ${{ matrix.platform }}
           molecule_command: test
