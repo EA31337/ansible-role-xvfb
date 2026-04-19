@@ -40,6 +40,32 @@
         force: true
         mode: "0644"
 
+    - name: Inject host CA certificate volumes into platforms
+      ansible.builtin.set_fact:
+        molecule_yml: >-
+          {{
+            molecule_yml | combine({
+              'platforms': updated_platforms
+            }, recursive=true)
+          }}
+      vars:
+        updated_platforms: >-
+          {% set platforms = [] %}
+          {% for platform in molecule_yml.platforms %}
+          {%   set volumes = platform.get('volumes', []) %}
+          {%   set cert_volumes = host_ca_certs.files
+                                  | map(attribute='path')
+                                  | map('regex_replace', '^(.+)$', '\\1:\\1:ro')
+                                  | list
+                                  if host_ca_certs.files is defined else [] %}
+          {%   set _ = platforms.append(platform | combine({'volumes': volumes + cert_volumes})) %}
+          {% endfor %}
+          {{ platforms }}
+      when:
+        - host_ca_certs is defined
+        - not host_ca_certs.failed | default(false)
+        - host_ca_certs.files | length > 0
+
 # Delegate to the standard molecule-docker create playbook.
 - import_playbook: >-
     {{ lookup('pipe', 'python3 -c "import molecule_docker, os; ' ~
