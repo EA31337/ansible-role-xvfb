@@ -10,9 +10,45 @@ RUN ln --symbolic --force \
     ln --symbolic --force \
       "$(realpath --relative-to=/etc /etc/group)" /etc/group
 
-# Install required packages for Ansible to work on NixOS.
-# Include pip to avoid nix-env inside the running container.
-RUN nix-channel --update && \
+# Inject custom CA certificates for MITM proxy environments.
+# The file is created by molecule/default/create.yml before the build.
+COPY custom-ca.crt /tmp/custom-ca.crt
+RUN set -e; \
+    BUNDLE=""; \
+    for f in \
+      /nix/var/nix/profiles/default/etc/ssl/certs/ca-bundle.crt \
+      /etc/ssl/certs/ca-certificates.crt \
+      /etc/ssl/certs/ca-bundle.crt; do \
+      if [ -f "$f" ]; then BUNDLE="$f"; break; fi; \
+    done; \
+    if [ -s /tmp/custom-ca.crt ] && [ -n "$BUNDLE" ]; then \
+      cp "$BUNDLE" /tmp/ca-bundle-combined.crt; \
+      cat /tmp/custom-ca.crt >> /tmp/ca-bundle-combined.crt; \
+      export NIX_SSL_CERT_FILE=/tmp/ca-bundle-combined.crt; \
+    fi; \
+    nix-channel --update && \
     nix-env -iA nixpkgs.procps nixpkgs.python3 nixpkgs.python3Packages.pip
+RUN rm -f /tmp/custom-ca.crt /tmp/ca-bundle-combined.crt
+
+{% elif 'alpine' in base_image %}
+FROM {{ base_image }}
+
+# Inject custom CA certificates for MITM proxy environments.
+# The file is created by molecule/default/create.yml before the build.
+# The cert is placed in two locations:
+#   1. Appended to the live bundle so apk can fetch packages immediately.
+#   2. Copied to /usr/local/share/ca-certificates/ so that the
+#      ca-certificates package post-install regenerates the bundle
+#      with our cert included.
+COPY custom-ca.crt /tmp/custom-ca.crt
+RUN if [ -s /tmp/custom-ca.crt ]; then \
+      cat /tmp/custom-ca.crt >> /etc/ssl/certs/ca-certificates.crt; \
+      mkdir -p /usr/local/share/ca-certificates; \
+      cp /tmp/custom-ca.crt /usr/local/share/ca-certificates/custom-ca.crt; \
+    fi && \
+    rm -f /tmp/custom-ca.crt
+
+RUN apk update && \
+    apk add --no-cache python3 sudo bash ca-certificates
 
 {% endif %}

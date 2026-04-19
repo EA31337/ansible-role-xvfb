@@ -18,7 +18,10 @@ lint: |
   ansible-lint
 platforms:
   - name: alpine-latest
-    image: i386/alpine:latest
+    dockerfile: ../resources/playbooks/Dockerfile.j2
+    image: xvfb-alpine:latest
+    base_image: i386/alpine:latest
+    pre_build_image: false
   - name: debian-latest
     image: debian:latest
   - name: nixos-latest
