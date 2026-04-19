@@ -1,10 +1,10 @@
 # Ansible Role: Xvfb
 
-[![Check](https://github.com/EA31337/ansible-role-xvfb/actions/workflows/check.yml/badge.svg)](https://github.com/EA31337/ansible-role-xvfb/actions/workflows/check.yml)
-[![devcontainer](https://github.com/EA31337/ansible-role-xvfb/actions/workflows/devcontainer-ci.yml/badge.svg)](https://github.com/EA31337/ansible-role-xvfb/actions/workflows/devcontainer-ci.yml)
-[![Molecule](https://github.com/EA31337/ansible-role-xvfb/actions/workflows/molecule.yml/badge.svg)](https://github.com/EA31337/ansible-role-xvfb/actions/workflows/molecule.yml)
-[![Test](https://github.com/EA31337/ansible-role-xvfb/actions/workflows/test.yml/badge.svg)](https://github.com/EA31337/ansible-role-xvfb/actions/workflows/test.yml)
-[![GitHub pull requests](https://img.shields.io/github/issues-pr/EA31337/ansible-role-xvfb)](https://github.com/EA31337/ansible-role-xvfb/pulls)
+[![Check](https://img.shields.io/github/actions/workflow/status/EA31337/ansible-role-xvfb/check.yml?label=Check)](https://github.com/EA31337/ansible-role-xvfb/actions/workflows/check.yml)
+[![Dev](https://img.shields.io/github/actions/workflow/status/EA31337/ansible-role-xvfb/devcontainer-ci.yml?label=Dev)](https://github.com/EA31337/ansible-role-xvfb/actions/workflows/devcontainer-ci.yml)
+[![Molecule](https://img.shields.io/github/actions/workflow/status/EA31337/ansible-role-xvfb/molecule.yml?label=Molecule)](https://github.com/EA31337/ansible-role-xvfb/actions/workflows/molecule.yml)
+[![Test](https://img.shields.io/github/actions/workflow/status/EA31337/ansible-role-xvfb/test.yml?label=Test)](https://github.com/EA31337/ansible-role-xvfb/actions/workflows/test.yml)
+[![Pull Requests](https://img.shields.io/github/issues-pr/EA31337/ansible-role-xvfb.svg)](https://github.com/EA31337/ansible-role-xvfb/pulls)
 [![License](https://img.shields.io/badge/license-GPLv3-brightgreen.svg)](LICENSE)
 
 Ansible role to install Xvfb (X virtual framebuffer) on UNIX-like platforms.
