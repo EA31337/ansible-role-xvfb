@@ -1,6 +1,6 @@
 # Ansible Role: Xvfb
 
-[![CodeRabbit PR Reviews](https://img.shields.io/coderabbit/prs/github/EA31337/ansible-role-xvfb?utm_source=oss&utm_medium=github&utm_campaign=EA31337%2Fansible-role-xvfb&labelColor=171717&color=FF570A&link=https%3A%2F%2Fcoderabbit.ai&label=CodeRabbit+PR+Reviews)](https://github.com/EA31337/ansible-role-xvfb/pulls)
+[![GitHub pull requests](https://img.shields.io/github/issues-pr/EA31337/ansible-role-xvfb)](https://github.com/EA31337/ansible-role-xvfb/pulls)
 [![License](https://img.shields.io/badge/license-GPLv3-brightgreen.svg)](LICENSE)
 
 Ansible role to install Xvfb (X virtual framebuffer) on UNIX-like platforms.
