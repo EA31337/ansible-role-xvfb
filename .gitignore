@@ -1,8 +1,8 @@
 .ansible
 ansible-role-*
+collections
 *.bak
 .cache
-collections
 *.html
 *.log
 *.org
