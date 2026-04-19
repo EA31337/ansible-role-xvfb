@@ -61,7 +61,16 @@ jobs:
       submodules: 'false'  # Set to 'true' or 'recursive' if repository uses submodules
 ```
 
+### Cogni AI Agent Workflow
+
+The `cogni-ai-agent.yml` workflow provides an integration with the Cogni AI Agent for autonomous issue resolution and PR review.
+
+It triggers on issue and pull request comments, as well as `workflow_dispatch`. It utilizes the `Cogni-AI-OU/cogni-ai-agent-action` and allows specifying various AI models to fulfill requests.
+
+*Note: Requires `OPENCODE_API_KEY` secret to be set in repository settings.*
+
 ### Copilot Setup Steps Workflow
+
 
 The `copilot-setup-steps.yml` workflow automates the installation and caching of Python dependencies required for the development environment and GitHub Copilot agents.
 
