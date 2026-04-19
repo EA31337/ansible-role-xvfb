@@ -4,6 +4,7 @@ extends: default
 ignore: |
   .cache
   .git
+  collections
 
 rules:
   comments:
