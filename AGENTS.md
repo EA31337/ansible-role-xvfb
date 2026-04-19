@@ -6,7 +6,7 @@ For project overview and install instructions, see [README.md](README.md).
 
 ## Setup & Environment Invariants
 
-- Python ≥ 3.10 required; Pipfile pins `python_version = "3.10"`.
+- Python 3.10+ required; Pipfile pins `python_version = "3.10"` but 3.11/3.12 work via virtualenv.
 - Install dependencies: `pip install -r .devcontainer/requirements.txt`.
 - Ansible collections: `ansible-galaxy install -r requirements.yml`.
 - Required collections: `community.docker`, `community.general ≥ 10.6.0`.
@@ -35,7 +35,7 @@ For project overview and install instructions, see [README.md](README.md).
 ## Agent Directives
 
 - MUST use FQCN for all modules (`ansible.builtin.*`, `community.general.*`).
-- MUST keep YAML keys sorted alphabetically in config files.
+- MUST keep YAML keys sorted alphabetically in config files when possible.
 - MUST ensure idempotency in all Ansible tasks.
 - MUST wrap lines at 120 characters (YAML and Markdown).
 - MUST end files with a newline character.
