@@ -1,73 +1,108 @@
 ---
-# Custom create playbook that injects host CA certificates into the Docker
-# build context before delegating to molecule-docker's default create playbook.
-#
-# This allows Docker image builds (Alpine apk, NixOS nix-channel) to trust
-# MITM proxy CA certificates that are installed on the host but absent from
-# the container base images.
-- name: Pre-create - inject host CA certificates into build context
+# Molecule create playbook for Docker driver.
+- name: Create
   hosts: localhost
   connection: local
   gather_facts: false
+  vars:
+    # Use controller Python (Ansible's interpreter)
+    ansible_python_interpreter: "{{ ansible_playbook_python }}"
+
   tasks:
+    - name: Ensure Python dependencies are installed on controller
+      ansible.builtin.command:
+        cmd: "{{ ansible_playbook_python }} -m pip install docker>=7.1 requests"
+      register: pip_install_result
+      changed_when: >-
+        pip_install_result.rc == 0
+        and 'Successfully installed' in pip_install_result.stdout
 
-    - name: Find custom CA certificates on host
-      ansible.builtin.find:
-        paths: /usr/local/share/ca-certificates
-        patterns: "*.crt"
-      register: host_ca_certs
-      ignore_errors: true
-
-    - name: Write combined custom CA bundle to scenario directory
-      when:
-        - host_ca_certs is defined
-        - not host_ca_certs.failed | default(false)
-        - host_ca_certs.files | length > 0
-      ansible.builtin.assemble:
-        src: /usr/local/share/ca-certificates
-        dest: "{{ molecule_scenario_directory }}/custom-ca.crt"
-        mode: "0644"
-        regexp: '\.crt$'
-
-    - name: Ensure empty custom CA placeholder exists
-      when: >-
-        host_ca_certs is not defined or
-        host_ca_certs.failed | default(false) or
-        host_ca_certs.files | length == 0
-      ansible.builtin.copy:
-        content: ""
-        dest: "{{ molecule_scenario_directory }}/custom-ca.crt"
-        force: true
-        mode: "0644"
-
-    - name: Inject host CA certificate volumes into platforms
+    - name: Discover proxy CA certificates on the host
       ansible.builtin.set_fact:
-        molecule_yml: >-
-          {{
-            molecule_yml | combine({
-              'platforms': updated_platforms
-            }, recursive=true)
-          }}
-      vars:
-        updated_platforms: >-
-          {% set platforms = [] %}
-          {% for platform in molecule_yml.platforms %}
-          {%   set volumes = platform.get('volumes', []) %}
-          {%   set cert_volumes = host_ca_certs.files
-                                  | map(attribute='path')
-                                  | map('regex_replace', '^(.+)$', '\\1:\\1:ro')
-                                  | list
-                                  if host_ca_certs.files is defined else [] %}
-          {%   set _ = platforms.append(platform | combine({'volumes': volumes + cert_volumes})) %}
-          {% endfor %}
-          {{ platforms }}
-      when:
-        - host_ca_certs is defined
-        - not host_ca_certs.failed | default(false)
-        - host_ca_certs.files | length > 0
+        host_ca_certs: >-
+          {{ lookup('ansible.builtin.fileglob',
+             '/usr/local/share/ca-certificates/*.crt',
+             wantlist=True) }}
 
-# Delegate to the standard molecule-docker create playbook.
-- import_playbook: >-
-    {{ lookup('pipe', 'python3 -c "import molecule_docker, os; ' ~
-    'print(os.path.dirname(molecule_docker.__file__))"') ~
-    '/playbooks/create.yml' }}
+    - name: Prepare build context for custom images
+      when: >-
+        molecule_yml.platforms
+        | selectattr('dockerfile', 'defined')
+        | list | length > 0
+      block:
+        - name: Ensure build context directory exists
+          ansible.builtin.file:
+            path: "{{ molecule_ephemeral_directory }}/ca-certificates"
+            state: directory
+            mode: "0755"
+
+        - name: Copy host CA certificates to build context
+          ansible.builtin.copy:
+            src: "{{ item }}"
+            dest: "{{ molecule_ephemeral_directory }}/ca-certificates/"
+            mode: "0644"
+          loop: "{{ host_ca_certs }}"
+
+        - name: Render Dockerfiles
+          ansible.builtin.template:
+            src: "{{ item.dockerfile }}"
+            dest: >-
+              {{ molecule_ephemeral_directory }}/{{ item.name }}.Dockerfile
+            mode: "0644"
+          loop: >-
+            {{ molecule_yml.platforms
+               | selectattr('dockerfile', 'defined') | list }}
+
+        - name: Build custom images
+          community.docker.docker_image:
+            name: "{{ item.name }}"
+            tag: molecule
+            build:
+              path: "{{ molecule_ephemeral_directory }}"
+              dockerfile: "{{ item.name }}.Dockerfile"
+            source: build
+            force_source: true
+          loop: >-
+            {{ molecule_yml.platforms
+               | selectattr('dockerfile', 'defined') | list }}
+
+    - name: Ensure test containers are running
+      community.docker.docker_container:
+        name: "{{ item.name }}"
+        image: >-
+          {{ (item.name ~ ':molecule')
+             if item.dockerfile is defined else item.image }}
+        command: sleep infinity
+        init: "{{ item.init | default(omit) }}"
+        privileged: >-
+          {{ item.privileged | default('nixos' in item.name) }}
+        security_opts: >-
+          {{ ['seccomp=unconfined', 'apparmor=unconfined']
+             if 'nixos' in item.name else omit }}
+        recreate: true
+        pull: >-
+          {{ false
+             if (item.dockerfile is defined or 'nixos' in item.name)
+             else true }}
+        volumes: >-
+          {{ host_ca_certs
+             | map('regex_replace', '^(.+)$', '\1:\1:ro')
+             | list or omit }}
+      loop: "{{ molecule_yml.platforms }}"
+
+    - name: Write molecule instance config
+      ansible.builtin.copy:
+        content: |
+          {% set instance_conf = [] %}
+          {% for item in molecule_yml.platforms %}
+          {%   set _ = instance_conf.append({
+                 'instance': item.name,
+                 'address': item.name,
+                 'user': 'root',
+                 'port': '22',
+                 'identity_file': ''
+               }) %}
+          {% endfor %}
+          {{ instance_conf | to_nice_yaml(indent=2) }}
+        dest: "{{ molecule_ephemeral_directory }}/instance_config.yml"
+        mode: "0644"
