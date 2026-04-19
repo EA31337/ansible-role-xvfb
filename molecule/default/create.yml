@@ -16,9 +16,13 @@
         paths: /usr/local/share/ca-certificates
         patterns: "*.crt"
       register: host_ca_certs
+      ignore_errors: true
 
     - name: Write combined custom CA bundle to scenario directory
-      when: host_ca_certs.files | length > 0
+      when:
+        - host_ca_certs is defined
+        - not host_ca_certs.failed | default(false)
+        - host_ca_certs.files | length > 0
       ansible.builtin.assemble:
         src: /usr/local/share/ca-certificates
         dest: "{{ molecule_scenario_directory }}/custom-ca.crt"
@@ -26,7 +30,10 @@
         regexp: '\.crt$'
 
     - name: Ensure empty custom CA placeholder exists
-      when: host_ca_certs.files | length == 0
+      when: >-
+        host_ca_certs is not defined or
+        host_ca_certs.failed | default(false) or
+        host_ca_certs.files | length == 0
       ansible.builtin.copy:
         content: ""
         dest: "{{ molecule_scenario_directory }}/custom-ca.crt"
