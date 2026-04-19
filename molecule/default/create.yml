@@ -5,7 +5,7 @@
 # This allows Docker image builds (Alpine apk, NixOS nix-channel) to trust
 # MITM proxy CA certificates that are installed on the host but absent from
 # the container base images.
-- name: Pre-create – inject host CA certificates into build context
+- name: Pre-create - inject host CA certificates into build context
   hosts: localhost
   connection: local
   gather_facts: false
@@ -30,8 +30,11 @@
       ansible.builtin.copy:
         content: ""
         dest: "{{ molecule_scenario_directory }}/custom-ca.crt"
-        force: false
+        force: true
         mode: "0644"
 
 # Delegate to the standard molecule-docker create playbook.
-- import_playbook: "{{ lookup('pipe', 'python3 -c \"import molecule_docker, os; print(os.path.dirname(molecule_docker.__file__))\"') ~ '/playbooks/create.yml' }}"
+- import_playbook: >-
+    {{ lookup('pipe', 'python3 -c "import molecule_docker, os; ' ~
+    'print(os.path.dirname(molecule_docker.__file__))"') ~
+    '/playbooks/create.yml' }}
