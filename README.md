@@ -1,6 +1,9 @@
 # Ansible Role: Xvfb
 
-[![CI](https://github.com/EA31337/ansible-role-xvfb/actions/workflows/molecule.yml/badge.svg)](https://github.com/EA31337/ansible-role-xvfb/actions/workflows/molecule.yml)
+[![Check](https://github.com/EA31337/ansible-role-xvfb/actions/workflows/check.yml/badge.svg)](https://github.com/EA31337/ansible-role-xvfb/actions/workflows/check.yml)
+[![devcontainer](https://github.com/EA31337/ansible-role-xvfb/actions/workflows/devcontainer-ci.yml/badge.svg)](https://github.com/EA31337/ansible-role-xvfb/actions/workflows/devcontainer-ci.yml)
+[![Molecule](https://github.com/EA31337/ansible-role-xvfb/actions/workflows/molecule.yml/badge.svg)](https://github.com/EA31337/ansible-role-xvfb/actions/workflows/molecule.yml)
+[![Test](https://github.com/EA31337/ansible-role-xvfb/actions/workflows/test.yml/badge.svg)](https://github.com/EA31337/ansible-role-xvfb/actions/workflows/test.yml)
 [![GitHub pull requests](https://img.shields.io/github/issues-pr/EA31337/ansible-role-xvfb)](https://github.com/EA31337/ansible-role-xvfb/pulls)
 [![License](https://img.shields.io/badge/license-GPLv3-brightgreen.svg)](LICENSE)
 
