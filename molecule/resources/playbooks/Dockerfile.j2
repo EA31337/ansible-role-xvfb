@@ -12,8 +12,11 @@ RUN ln --symbolic --force \
 
 # Inject custom CA certificates for MITM proxy environments.
 # The file is created by molecule/default/create.yml before the build.
+# Store combined cert in /etc/nix/ - files in /etc/ssl/certs/ vanish across
+# Docker overlay layers in the NixOS image due to a containerd/overlayfs bug.
 COPY custom-ca.crt /tmp/custom-ca.crt
 RUN set -e; \
+    COMBINED="/etc/nix/ca-bundle.crt"; \
     BUNDLE=""; \
     for f in \
       /nix/var/nix/profiles/default/etc/ssl/certs/ca-bundle.crt \
@@ -22,13 +25,14 @@ RUN set -e; \
       if [ -f "$f" ]; then BUNDLE="$f"; break; fi; \
     done; \
     if [ -s /tmp/custom-ca.crt ] && [ -n "$BUNDLE" ]; then \
-      cp "$BUNDLE" /tmp/ca-bundle-combined.crt; \
-      cat /tmp/custom-ca.crt >> /tmp/ca-bundle-combined.crt; \
-      export NIX_SSL_CERT_FILE=/tmp/ca-bundle-combined.crt; \
+      mkdir -p /etc/nix; \
+      cp "$BUNDLE" "$COMBINED"; \
+      cat /tmp/custom-ca.crt >> "$COMBINED"; \
+      printf "ssl-cert-file = %s\n" "$COMBINED" >> /etc/nix/nix.conf; \
     fi; \
     nix-channel --update && \
     nix-env -iA nixpkgs.procps nixpkgs.python3 nixpkgs.python3Packages.pip
-RUN rm -f /tmp/custom-ca.crt /tmp/ca-bundle-combined.crt
+RUN rm -f /tmp/custom-ca.crt
 
 {% elif 'alpine' in base_image %}
 FROM {{ base_image }}
