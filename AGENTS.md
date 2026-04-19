@@ -9,9 +9,9 @@ For project overview and install instructions, see [README.md](README.md).
 - Python 3.10+ required; Pipfile pins `python_version = "3.10"` but 3.11/3.12 work via virtualenv.
 - Install dependencies: `pip install -r .devcontainer/requirements.txt`.
 - Ansible collections: `ansible-galaxy install -r requirements.yml`.
-- Required collections: `community.docker`, `community.general ≥ 10.6.0`.
+- Required collections: `community.docker`, `community.general >= 10.6.0`.
 - `community.docker` MUST be installed before Molecule can create/destroy containers.
-- `community.general.from_ini` filter requires `community.general ≥ 10.6.0`.
+- `community.general.from_ini` filter requires `community.general >= 10.6.0`.
 
 ## Key Files & Context Injection
 
@@ -75,8 +75,8 @@ pre-commit run -a
 
 ### Test Sequence
 
-`dependency → cleanup → destroy → syntax → create → prepare → converge →
-idempotence → side_effect → verify → cleanup → destroy`
+`dependency -> cleanup -> destroy -> syntax -> create -> prepare -> converge ->
+idempotence -> side_effect -> verify -> cleanup -> destroy`
 
 ## Troubleshooting Matrix
 
@@ -121,7 +121,7 @@ idempotence → side_effect → verify → cleanup → destroy`
 
 > `path escapes from parent` during NixOS container creation.
 
-- **Root cause**: containerd ≥ 2.2.0 / Go 1.24 rejects absolute symlinks
+- **Root cause**: containerd >= 2.2.0 / Go 1.24 rejects absolute symlinks
   in `/etc/passwd` and `/etc/group` that point into `/nix/store`.
 - **Fix**: The `Dockerfile.j2` template converts these to relative symlinks
   via `realpath --relative-to`. See `molecule/resources/playbooks/Dockerfile.j2`.
@@ -134,10 +134,10 @@ idempotence → side_effect → verify → cleanup → destroy`
 
 - **Root cause**: `molecule-docker 2.1.0` create/destroy playbooks use
   `when: (lookup('env', 'HOME'))` which is a string, not boolean. This
-  becomes an error in `ansible-core ≥ 2.23`.
+  becomes an error in `ansible-core >= 2.23`.
 - **Workaround**: `molecule.yml` sets `allow_broken_conditionals: true` in
   `provisioner.config_options.defaults`. See:
-  <https://github.com/ansible-community/molecule-plugins/issues/295>
+  <https://github.com/ansible-community/molecule-plugins/issues/320>
 - **Long-term fix**: Wait for upstream `molecule-docker` patch.
 
 ### Pipfile requires Python 3.10
@@ -197,6 +197,6 @@ pre-commit run j2lint -a
 
 - Project documentation: [README.md](README.md)
 - Agent conventions: [.github/copilot-instructions.md](.github/copilot-instructions.md)
-- Molecule docs: <https://molecule.readthedocs.io/>
-- Ansible lint rules: <https://ansible.readthedocs.io/projects/lint/rules/>
+- Molecule docs: <https://docs.ansible.com/projects/molecule/>
+- Ansible lint rules: <https://docs.ansible.com/projects/lint/rules/>
 - Org baseline: <https://github.com/Cogni-AI-OU/.github/blob/main/AGENTS.md>
