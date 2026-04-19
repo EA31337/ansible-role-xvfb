@@ -7,7 +7,7 @@ Run all Molecule scenarios and report results as a table.
 1. Install dependencies (if not already present):
 
    ```bash
-   ansible-galaxy collection install -r requirements.yml -p collections
+   ansible-galaxy collection install -r requirements.yml
    ```
 
 2. Run each Molecule step individually to isolate failures:
@@ -67,6 +67,7 @@ Use ✅ for pass, ❌ for fail, ⏭️ for skipped.
 - If NixOS fails with `path escapes from parent`, the `Dockerfile.j2`
   template should convert `/etc/passwd` and `/etc/group` symlinks to
   relative paths via `realpath --relative-to`.
-- If pip fails inside molecule-action, ensure `create.yml`/`destroy.yml`
-  use `ansible.builtin.command` instead of `ansible.builtin.pip`.
+- If molecule-docker create/destroy fails with broken conditionals,
+  ensure `allow_broken_conditionals: true` is set in `molecule.yml`
+  under `provisioner.config_options.defaults`.
 - Refer to [AGENTS.md](../../AGENTS.md) for the full troubleshooting matrix.
