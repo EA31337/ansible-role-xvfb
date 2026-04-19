@@ -1,0 +1,72 @@
+# Molecule Test Runner
+
+Run all Molecule scenarios and report results as a table.
+
+## Instructions
+
+1. Install dependencies (if not already present):
+
+   ```bash
+   ansible-galaxy collection install -r requirements.yml -p collections
+   ```
+
+2. Run each Molecule step individually to isolate failures:
+
+   ```bash
+   molecule destroy
+   molecule create
+   molecule converge
+   molecule idempotence
+   molecule verify
+   molecule destroy
+   ```
+
+3. Record every step outcome (✅ pass, ❌ fail, ⏭️ skipped).
+
+4. Report results in a **Step ✕ Platform** table (see template below).
+
+## Scenario
+
+| Scenario | Notes |
+| --- | --- |
+| `default` | Installs Xvfb with `xvfb_install_x11_utils: true` |
+
+## Platforms
+
+| Container | Image | Notes |
+| --- | --- | --- |
+| `alpine-latest` | `i386/alpine:latest` | 32-bit Alpine; uses `apk` |
+| `debian-latest` | `debian:latest` | Uses `apt` |
+| `nixos-latest` | `nixos/nix:latest` | Custom Dockerfile; uses `nix-env` |
+| `ubuntu-jammy` | `ubuntu:jammy` | Uses `apt` |
+| `ubuntu-noble` | `ubuntu:noble` | Uses `apt` |
+| `ubuntu-latest` | `ubuntu:latest` | Uses `apt` |
+
+## Results Template
+
+Fill in each cell after running the tests.
+Use ✅ for pass, ❌ for fail, ⏭️ for skipped.
+
+### Step-Level Results
+
+| Platform | create | prepare | converge | idempotence | verify |
+| --- | :---: | :---: | :---: | :---: | :---: |
+| `alpine-latest` | | | | | |
+| `debian-latest` | | | | | |
+| `nixos-latest` | | | | | |
+| `ubuntu-jammy` | | | | | |
+| `ubuntu-noble` | | | | | |
+| `ubuntu-latest` | | | | | |
+
+## Troubleshooting
+
+- If Alpine fails with TLS errors, check that `dl-cdn.alpinelinux.org`
+  is reachable and CA certificates are valid in the Docker build context.
+- If NixOS fails with SSL errors, check `Dockerfile.j2` CA cert injection
+  and ensure `channels.nixos.org` is reachable.
+- If NixOS fails with `path escapes from parent`, the `Dockerfile.j2`
+  template should convert `/etc/passwd` and `/etc/group` symlinks to
+  relative paths via `realpath --relative-to`.
+- If pip fails inside molecule-action, ensure `create.yml`/`destroy.yml`
+  use `ansible.builtin.command` instead of `ansible.builtin.pip`.
+- Refer to [AGENTS.md](../../AGENTS.md) for the full troubleshooting matrix.
