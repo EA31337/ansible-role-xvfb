@@ -1,7 +1,12 @@
 # Ansible Role: Xvfb
 
-[![CodeRabbit PR Reviews](https://img.shields.io/coderabbit/prs/github/EA31337/ansible-role-xvfb?utm_source=oss&utm_medium=github&utm_campaign=EA31337%2Fansible-role-xvfb&labelColor=171717&color=FF570A&link=https%3A%2F%2Fcoderabbit.ai&label=CodeRabbit+PR+Reviews)](https://github.com/EA31337/ansible-role-xvfb/pulls)
-[![License](https://img.shields.io/badge/license-GPLv3-brightgreen.svg)](LICENSE)
+[![License][license-badge]][license-link]
+[![Check][check-badge]][check-link]
+[![Dev][dev-badge]][dev-link]
+[![Molecule][molecule-badge]][molecule-link]
+[![Pull Requests][pr-badge]][pr-link]
+[![Test][test-badge]][test-link]
+[![Edit][gh-edit-badge]][gh-edit-link]
 
 Ansible role to install Xvfb (X virtual framebuffer) on UNIX-like platforms.
 
@@ -38,7 +43,7 @@ ansible-galaxy install git+https://github.com/EA31337/ansible-role-xvfb.git
 ## Role Variables
 
 For available variables,
-check [`defaults/main.yml`](defaults/main.yml).
+check [`defaults/main.yml`][defaults-link].
 
 ## Testing
 
@@ -82,3 +87,19 @@ GNU GPL v3
 See: [LICENSE](./LICENSE)
 
 <!-- Named links -->
+
+[license-badge]: https://img.shields.io/badge/license-GPLv3-brightgreen.svg
+[license-link]: ./LICENSE
+[check-badge]: https://img.shields.io/github/actions/workflow/status/EA31337/ansible-role-xvfb/check.yml?label=Check
+[check-link]: https://github.com/EA31337/ansible-role-xvfb/actions/workflows/check.yml
+[dev-badge]: https://img.shields.io/github/actions/workflow/status/EA31337/ansible-role-xvfb/devcontainer-ci.yml?label=Dev
+[dev-link]: https://github.com/EA31337/ansible-role-xvfb/actions/workflows/devcontainer-ci.yml
+[molecule-badge]: https://img.shields.io/github/actions/workflow/status/EA31337/ansible-role-xvfb/molecule.yml?label=Molecule
+[molecule-link]: https://github.com/EA31337/ansible-role-xvfb/actions/workflows/molecule.yml
+[pr-badge]: https://img.shields.io/github/issues-pr/EA31337/ansible-role-xvfb.svg
+[pr-link]: https://github.com/EA31337/ansible-role-xvfb/pulls
+[test-badge]: https://img.shields.io/github/actions/workflow/status/EA31337/ansible-role-xvfb/test.yml?label=Test
+[test-link]: https://github.com/EA31337/ansible-role-xvfb/actions/workflows/test.yml
+[gh-edit-badge]: https://img.shields.io/badge/GitHub-edit-purple.svg?logo=github
+[gh-edit-link]: https://github.dev/EA31337/ansible-role-xvfb
+[defaults-link]: defaults/main.yml
