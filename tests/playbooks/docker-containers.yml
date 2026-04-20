@@ -23,6 +23,13 @@
         ansible_python_interpreter: "{{ controller_python }}"
       when: "'xvfb-on-nixos-latest' in groups['docker_containers']"
 
+    - name: Ensure ca-certificates directory exists in build context
+      ansible.builtin.file:
+        path: "{{ nixos_dockerfile_output | dirname }}/ca-certificates"
+        state: directory
+        mode: "0755"
+      when: "'xvfb-on-nixos-latest' in groups['docker_containers']"
+
     - name: Build NixOS image with Python preinstalled
       community.docker.docker_image:
         name: "{{ nixos_built_image }}"
