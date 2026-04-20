@@ -28,6 +28,7 @@ For project overview and install instructions, see [README.md](README.md).
 | `molecule/resources/playbooks/Dockerfile.j2` | NixOS container build template |
 | `requirements.yml` | Ansible Galaxy collection dependencies |
 | `.pre-commit-config.yaml` | Pre-commit hooks (yamllint, ansible-lint, j2lint, etc.) |
+| `.github/prompts/molecule-test.prompt.md` | Step-by-step Molecule test runner prompt |
 | `.ansible-lint` | Ansible-lint configuration |
 | `.yamllint` | YAML lint rules (max line length 120) |
 | `.markdownlint.yaml` | Markdown lint rules (max line length 120) |
@@ -58,6 +59,9 @@ For project overview and install instructions, see [README.md](README.md).
 | `ubuntu-latest` | `ubuntu:latest` | Uses `apt` |
 
 ### Running Tests
+
+When asked to run molecule test, follow the step-by-step instructions in
+[`.github/prompts/molecule-test.prompt.md`](.github/prompts/molecule-test.prompt.md).
 
 ```bash
 # Full test suite (all platforms)
