@@ -46,6 +46,7 @@ provisioner:
       # See: https://github.com/ansible-community/molecule-plugins/issues/295
       allow_broken_conditionals: true
       # Ensure collections installed to ./collections are found by ansible-playbook.
+      callbacks_enabled: ansible.posix.profile_tasks
       collections_path: >-
         ${MOLECULE_PROJECT_DIRECTORY}/collections:~/.ansible/collections:/usr/share/ansible/collections
       host_key_checking: false
