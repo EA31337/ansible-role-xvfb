@@ -13,22 +13,15 @@
       ansible.builtin.command:
         cmd: "{{ ansible_playbook_python }} -m pip install docker>=7.1 requests"
       register: pip_install_result
-      changed_when: >-
-        pip_install_result.rc == 0
-        and 'Successfully installed' in pip_install_result.stdout
+      changed_when: pip_install_result.rc == 0 and 'Successfully installed' in pip_install_result.stdout
 
     - name: Discover proxy CA certificates on the host
       ansible.builtin.set_fact:
         host_ca_certs: >-
-          {{ lookup('ansible.builtin.fileglob',
-             '/usr/local/share/ca-certificates/*.crt',
-             wantlist=True) }}
+          {{ lookup('ansible.builtin.fileglob', '/usr/local/share/ca-certificates/*.crt', wantlist=True) }}
 
     - name: Prepare build context for custom images
-      when: >-
-        molecule_yml.platforms
-        | selectattr('dockerfile', 'defined')
-        | list | length > 0
+      when: molecule_yml.platforms | selectattr('dockerfile', 'defined') | list | length > 0
       block:
         - name: Ensure build context directory exists
           ansible.builtin.file:
@@ -46,12 +39,9 @@
         - name: Render Dockerfiles
           ansible.builtin.template:
             src: "{{ item.dockerfile }}"
-            dest: >-
-              {{ molecule_ephemeral_directory }}/{{ item.name }}.Dockerfile
+            dest: "{{ molecule_ephemeral_directory }}/{{ item.name }}.Dockerfile"
             mode: "0644"
-          loop: >-
-            {{ molecule_yml.platforms
-               | selectattr('dockerfile', 'defined') | list }}
+          loop: "{{ molecule_yml.platforms | selectattr('dockerfile', 'defined') | list }}"
 
         - name: Build custom images
           community.docker.docker_image:
@@ -62,32 +52,22 @@
               dockerfile: "{{ item.name }}.Dockerfile"
             source: build
             force_source: true
-          loop: >-
-            {{ molecule_yml.platforms
-               | selectattr('dockerfile', 'defined') | list }}
+          loop: "{{ molecule_yml.platforms | selectattr('dockerfile', 'defined') | list }}"
 
     - name: Ensure test containers are running
       community.docker.docker_container:
         name: "{{ item.name }}"
-        image: >-
-          {{ (item.name ~ ':molecule')
-             if item.dockerfile is defined else item.image }}
+        image: "{{ (item.name ~ ':molecule') if item.dockerfile is defined else item.image }}"
         command: sleep infinity
         init: "{{ item.init | default(omit) }}"
-        privileged: >-
-          {{ item.privileged | default('nixos' in item.name) }}
-        security_opts: >-
-          {{ ['seccomp=unconfined', 'apparmor=unconfined']
-             if 'nixos' in item.name else omit }}
+        # NixOS containers require privileged mode due to non-standard filesystem layout.
+        privileged: "{{ item.privileged | default('nixos' in item.name) }}"
+        # Relaxed seccomp/apparmor for NixOS compatibility.
+        security_opts: "{{ ['seccomp=unconfined', 'apparmor=unconfined'] if 'nixos' in item.name else omit }}"
         recreate: true
-        pull: >-
-          {{ false
-             if (item.dockerfile is defined or 'nixos' in item.name)
-             else true }}
-        volumes: >-
-          {{ host_ca_certs
-             | map('regex_replace', '^(.+)$', '\1:\1:ro')
-             | list or omit }}
+        pull: "{{ false if (item.dockerfile is defined or 'nixos' in item.name) else true }}"
+        # Mount host CA certificates for proxy/firewall SSL interception environments.
+        volumes: "{{ host_ca_certs | map('regex_replace', '^(.+)$', '\\1:\\1:ro') | list or omit }}"
       loop: "{{ molecule_yml.platforms }}"
 
     - name: Write molecule instance config
