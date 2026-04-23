@@ -6,24 +6,39 @@
   tasks:
 
     - name: Verify Xvfb command
-      changed_when: false
       ansible.builtin.command: which Xvfb
+      changed_when: false
 
     - name: Check if Xvfb service is running
       when: xvfb_service_enabled | default(true)
       block:
-        - name: Check Xvfb service status
-          ansible.builtin.service_facts:
+        - name: Check Xvfb status in supervisor
+          ansible.builtin.command: supervisorctl status xvfb
+          register: xvfb_status
+          changed_when: false
+          failed_when: false
 
-        - name: Assert Xvfb service is running
+        - name: Assert Xvfb is running in supervisor
           ansible.builtin.assert:
-            that: ansible_facts.services['xvfb.service'].state == 'running'
-            fail_msg: >-
-              Xvfb service is not running but should be
-              (state: {{ ansible_facts.services['xvfb.service'].state }})
-          when:
-            - xvfb_service_enabled | default(true)
-            - ansible_distribution not in ['NixOS', 'OtherLinux']
-            - ansible_facts is defined
-            - ansible_facts.services is defined
-            - "'xvfb.service' in ansible_facts.services"
+            that: "'RUNNING' in xvfb_status.stdout"
+            fail_msg: "Xvfb is not running in supervisor (status: {{ xvfb_status.stdout | default('N/A') }})"
+
+        - name: Check if Xvfb process is running
+          ansible.builtin.command: ps -e
+          register: ps_output
+          changed_when: false
+
+        - name: Assert Xvfb process is running
+          ansible.builtin.assert:
+            that: "'Xvfb' in ps_output.stdout"
+            fail_msg: "Xvfb process not found in process list"
+
+        - name: Verify Xvfb log file exists
+          ansible.builtin.stat:
+            path: /var/log/supervisor/xvfb.log
+          register: xvfb_log
+
+        - name: Assert Xvfb log file exists
+          ansible.builtin.assert:
+            that: xvfb_log.stat.exists
+            fail_msg: "Xvfb supervisor log file /var/log/supervisor/xvfb.log does not exist"
