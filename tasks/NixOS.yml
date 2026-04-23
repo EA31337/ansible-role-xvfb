@@ -9,20 +9,18 @@
   when: nix_store_stat.stat.exists
   block:
 
-    - name: Check if packages are already installed
-      ansible.builtin.command: nix-env -q {{ item.name }}
-      register: pkg_check
-      failed_when: pkg_check.rc not in [0, 1]
+    - name: Get list of installed Nix packages
+      ansible.builtin.command: nix-env -q
+      register: installed_packages
+      failed_when: false
       changed_when: false
-      loop: "{{ xvfb_nixos_install_pkgs }}"
 
     - name: Ensure packages are installed
-      ansible.builtin.command: nix-env -iA {{ item.0.package }}
-      loop: "{{ xvfb_nixos_install_pkgs | zip(pkg_check.results) | list }}"
+      ansible.builtin.command: nix-env -iA {{ item.package }}
+      loop: "{{ xvfb_nixos_install_pkgs }}"
       loop_control:
-        label: "{{ item.0.name }}"
-      register: pkg_install
-      when: item.1.rc != 0
+        label: "{{ item.name }}"
+      when: installed_packages.stdout_lines | default([]) | select('search', item.name) | list | length == 0
       changed_when: true
 
 - name: Include configuration tasks for supervisor
