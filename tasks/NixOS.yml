@@ -12,7 +12,7 @@
     - name: Check if packages are already installed
       ansible.builtin.command: nix-env -q {{ item.name }}
       register: pkg_check
-      failed_when: false
+      failed_when: pkg_check.rc not in [0, 1]
       changed_when: false
       loop: "{{ xvfb_nixos_install_pkgs }}"
 

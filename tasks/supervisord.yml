@@ -91,11 +91,11 @@
       # noqa: command-instead-of-module - supervisorctl doesn't support checking for pid.
       ansible.builtin.command: supervisorctl pid
       changed_when: false
-      failed_when: false
       register: supervisord_status
+      failed_when: supervisord_status.rc not in [0, 7]
 
     - name: Start supervisord daemon
       ansible.builtin.command: supervisord -c "{{ supervisor_conf_file }}"
       args:
         creates: "{{ supervisor_supervisord_pidfile | default('/var/run/supervisord.sock', true) }}"
-      when: supervisord_status.rc | default(0) != 0
+      when: supervisord_status.rc == 7
