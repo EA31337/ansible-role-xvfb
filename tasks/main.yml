@@ -15,7 +15,8 @@
     file: "{{ xvfb_os_family }}.yml"
   tags: xvfb
 
-- name: Get supervisord status for Xvfb
+- name: Ensure Xvfb is started via supervisor
+  become: "{{ ansible_user_id != 'root' }}"
   community.general.supervisorctl:
     name: xvfb
     state: started
