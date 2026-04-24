@@ -12,7 +12,7 @@
     - name: Get list of installed Nix packages
       ansible.builtin.command: nix-env -q
       register: installed_packages
-      failed_when: false
+      failed_when: installed_packages.rc != 0
       changed_when: false
 
     - name: Ensure packages are installed
