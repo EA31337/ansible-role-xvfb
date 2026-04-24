@@ -56,12 +56,12 @@
 
     - name: Read include.files and pidfile from supervisor configuration file
       ansible.builtin.set_fact:
-        supervisor_include_files: |
+        supervisor_include_files: >-
           {{ (supervisor_conf_content.content | b64decode | community.general.from_ini).get('include', {})
-            .get('files', '/etc/supervisor/conf.d') }}
-        supervisor_supervisord_pidfile: |
+            .get('files', '/etc/supervisor/conf.d').split(';')[0].split('#')[0] | trim }}
+        supervisor_supervisord_pidfile: >-
           {{ (supervisor_conf_content.content | b64decode | community.general.from_ini).get('supervisord', {})
-            .get('pidfile', '') }}
+            .get('pidfile', '').split(';')[0].split('#')[0] | trim }}
 
     - name: Read include's dir and extension from supervisor configuration file
       ansible.builtin.set_fact:
@@ -91,8 +91,8 @@
       # noqa: command-instead-of-module - supervisorctl doesn't support checking for pid.
       ansible.builtin.command: supervisorctl pid
       changed_when: false
-      failed_when: supervisord_status.rc not in [0, 7]
       register: supervisord_status
+      failed_when: supervisord_status.rc not in [0, 7]
 
     - name: Start supervisord daemon
       ansible.builtin.command: supervisord -c "{{ supervisor_conf_file }}"

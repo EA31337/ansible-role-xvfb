@@ -7,5 +7,5 @@
 - name: Get supervisord status for Xvfb
   community.general.supervisorctl:
     name: xvfb
-    state: present
+    state: started
   when: xvfb_service_enabled | bool
