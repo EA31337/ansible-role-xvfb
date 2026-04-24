@@ -2,7 +2,7 @@
 # Vars file for xvfb role.
 # Note: Keep YAML keys sorted alphabetically.
 xvfb_nixos_install_pkgs:
-  - name: python3.12-supervisor
+  - name: supervisor
     package: nixpkgs.python3Packages.supervisor
   # Note: xorg-server package provides: X Xephyr Xnest Xorg Xvfb gtf
   - name: xorg-server

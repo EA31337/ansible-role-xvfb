@@ -9,6 +9,15 @@
   environment:
     DEBIAN_FRONTEND: noninteractive
 
+- name: Ensures X11 utils are installed
+  ansible.builtin.apt:
+    name: x11-utils
+    state: present
+  become: "{{ ansible_user_id != 'root' }}"
+  when: xvfb_install_x11_utils
+  environment:
+    DEBIAN_FRONTEND: noninteractive
+
 - name: Ensure Xvfb is service installed
   become: "{{ ansible_user_id != 'root' }}"
   when: xvfb_service_enabled

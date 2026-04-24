@@ -9,13 +9,14 @@
         if command -v python3 || command -v python; then
           exit 0
         elif command -v apk; then
-          apk add --no-cache python3 py3-pip
+          apk add --no-cache python3 py3-pip procps
         elif command -v apt; then
           if [ -f /etc/os-release ] && grep -qi '^ID=ubuntu' /etc/os-release; then
             sed -i -e 's|http://archive.ubuntu.com/ubuntu|http://azure.archive.ubuntu.com/ubuntu|g' \
               -e 's|http://security.ubuntu.com/ubuntu|http://azure.archive.ubuntu.com/ubuntu|g' /etc/apt/sources.list
           fi
-          DEBIAN_FRONTEND=noninteractive apt -y update && DEBIAN_FRONTEND=noninteractive apt install -y python3-minimal
+          DEBIAN_FRONTEND=noninteractive apt -y update && \
+          DEBIAN_FRONTEND=noninteractive apt install -y python3-minimal procps
         elif command -v dnf; then
           dnf install -y python3
         elif command -v zypper; then
