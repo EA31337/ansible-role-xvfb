@@ -102,8 +102,8 @@
       when: supervisord_status.rc == 7
 
     - name: Update supervisor to include new programs
-      # noqa: no-handler - We need to update supervisor before continuing
+      # noqa: no-handler command-instead-of-module - We need to update supervisor before continuing
       ansible.builtin.command: supervisorctl update
       register: supervisor_update
-      changed_when: "'added' in supervisor_update.stdout or 'updated' in supervisor_update.stdout"
+      changed_when: xvfb_supervisor_conf.changed or supervisord_status.rc == 7
       when: xvfb_service_enabled | bool and (xvfb_supervisor_conf.changed or supervisord_status.rc == 7)
