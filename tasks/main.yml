@@ -1,10 +1,22 @@
 ---
+- name: Check for Nix store
+  ansible.builtin.stat:
+    path: /nix/store
+  register: xvfb_nix_store_stat
+
+- name: Set OS family fact
+  ansible.builtin.set_fact:
+    xvfb_os_family: >-
+      {{ 'NixOS' if (ansible_os_family == 'OtherLinux' and xvfb_nix_store_stat.stat.exists)
+      else ansible_os_family }}
+
 - name: Includes operating system specific tasks to install Xvfb
   ansible.builtin.include_tasks:
-    file: "{{ ansible_os_family }}.yml"
+    file: "{{ xvfb_os_family }}.yml"
   tags: xvfb
 
-- name: Get supervisord status for Xvfb
+- name: Ensure Xvfb is started via supervisor
+  become: "{{ ansible_user_id != 'root' }}"
   community.general.supervisorctl:
     name: xvfb
     state: started
