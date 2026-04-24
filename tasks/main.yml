@@ -1,4 +1,14 @@
 ---
+- name: Check for Nix store
+  ansible.builtin.stat:
+    path: /nix/store
+  register: xvfb_nix_store_stat
+
+- name: Set OS family to NixOS if Nix store exists
+  ansible.builtin.set_fact:
+    ansible_os_family: NixOS
+  when: (ansible_os_family == 'OtherLinux') and xvfb_nix_store_stat.stat.exists
+
 - name: Includes operating system specific tasks to install Xvfb
   ansible.builtin.include_tasks:
     file: "{{ ansible_os_family }}.yml"

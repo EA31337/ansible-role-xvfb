@@ -86,6 +86,7 @@
         src: supervisord-xvfb-program.conf.j2
         dest: "{{ supervisor_include_files_dir }}/xvfb.{{ supervisor_include_files_ext | trim }}"
         mode: "0644"
+      register: xvfb_supervisor_conf
 
     - name: Check if supervisord is running
       # noqa: command-instead-of-module - supervisorctl doesn't support checking for pid.
@@ -99,3 +100,10 @@
       args:
         creates: "{{ supervisor_supervisord_pidfile | default('/var/run/supervisord.sock', true) }}"
       when: supervisord_status.rc == 7
+
+    - name: Update supervisor to include new programs
+      # noqa: no-handler - We need to update supervisor before continuing
+      ansible.builtin.command: supervisorctl update
+      register: supervisor_update
+      changed_when: "'added' in supervisor_update.stdout or 'updated' in supervisor_update.stdout"
+      when: xvfb_service_enabled | bool and (xvfb_supervisor_conf.changed or supervisord_status.rc == 7)
