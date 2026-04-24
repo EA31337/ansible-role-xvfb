@@ -41,7 +41,7 @@
 
     - name: Create supervisord configuration file
       ansible.builtin.template:
-        src: supervisord-{{ ansible_os_family }}.conf.j2
+        src: supervisord-{{ xvfb_os_family }}.conf.j2
         dest: "{{ supervisor_conf_file }}"
         mode: "0644"
       notify:
@@ -105,5 +105,5 @@
       # noqa: no-handler command-instead-of-module - We need to update supervisor before continuing
       ansible.builtin.command: supervisorctl update
       register: supervisor_update
-      changed_when: xvfb_supervisor_conf.changed or supervisord_status.rc == 7
-      when: xvfb_service_enabled | bool and (xvfb_supervisor_conf.changed or supervisord_status.rc == 7)
+      changed_when: xvfb_supervisor_conf.changed
+      when: xvfb_service_enabled | bool and xvfb_supervisor_conf.changed
