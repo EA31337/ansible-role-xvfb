@@ -14,3 +14,6 @@ requirements-local.yml
 *.swp
 *.txt
 *.verb
+/.github/agents/
+/.github/instructions/
+/.github/skills/
