@@ -9,14 +9,25 @@
         if command -v python3 || command -v python; then
           exit 0
         elif command -v apk; then
-          apk add --no-cache python3 py3-pip procps
+          apk add --no-cache python3 py3-pip procps sudo ca-certificates
         elif command -v apt; then
           if [ -f /etc/os-release ] && grep -qi '^ID=ubuntu' /etc/os-release; then
-            sed -i -e 's|http://archive.ubuntu.com/ubuntu|http://azure.archive.ubuntu.com/ubuntu|g' \
-              -e 's|http://security.ubuntu.com/ubuntu|http://azure.archive.ubuntu.com/ubuntu|g' /etc/apt/sources.list
+            mirror="http://azure.archive.ubuntu.com/ubuntu"
+            if [ -f /etc/apt/sources.list ]; then
+              sed -i \
+                -e "s|http://archive.ubuntu.com/ubuntu|$mirror|g" \
+                -e "s|http://security.ubuntu.com/ubuntu|$mirror|g" \
+                /etc/apt/sources.list
+            fi
+            if [ -f /etc/apt/sources.list.d/ubuntu.sources ]; then
+              sed -i \
+                -e "s|http://archive.ubuntu.com/ubuntu|$mirror|g" \
+                -e "s|http://security.ubuntu.com/ubuntu|$mirror|g" \
+                /etc/apt/sources.list.d/ubuntu.sources
+            fi
           fi
           DEBIAN_FRONTEND=noninteractive apt -y update && \
-          DEBIAN_FRONTEND=noninteractive apt install -y python3-minimal procps
+          DEBIAN_FRONTEND=noninteractive apt install -y python3-minimal procps sudo ca-certificates
         elif command -v dnf; then
           dnf install -y python3
         elif command -v zypper; then
