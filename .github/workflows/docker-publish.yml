@@ -36,10 +36,10 @@ jobs:
       - name: Install dependencies
         run: |
           python3 -m pip install --upgrade pip
-          pip install jinja2
+          pip install -r .devcontainer/requirements.txt
 
       - name: Render Dockerfile
-        run: python3 -c "from jinja2 import Template; print(Template(open('Dockerfile.j2').read()).render(docker_image='ubuntu:noble'))" > Dockerfile
+        run: jinja2 Dockerfile.j2 -D docker_image='ubuntu:noble' > Dockerfile
 
       - name: Extract metadata (tags, labels) for Docker
         id: meta
@@ -50,7 +50,6 @@ jobs:
             type=edge,branch=master
             type=ref,event=branch
             type=ref,event=tag
-            type=sha,format=long
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v5
