@@ -60,3 +60,9 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
           push: true
           tags: ${{ steps.meta.outputs.tags }}
+
+      - name: Test Docker image
+        run: |
+          TAG=$(echo "${{ steps.meta.outputs.tags }}" | head -n 1)
+          docker pull "$TAG"
+          docker run --rm "$TAG" Xvfb -version
