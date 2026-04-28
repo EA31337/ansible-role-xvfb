@@ -65,4 +65,5 @@ jobs:
         run: |
           TAG=$(echo "${{ steps.meta.outputs.tags }}" | head -n 1)
           docker pull "$TAG"
-          docker run --rm "$TAG" Xvfb -version
+          docker run --rm "$TAG" command -v Xvfb
+          docker run --rm "$TAG" command -v supervisord
