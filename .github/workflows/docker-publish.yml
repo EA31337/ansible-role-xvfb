@@ -6,7 +6,6 @@ on:
   push:
     branches:
       - master
-      - opencode/dispatch-f50507-20260428225737
     tags:
       - 'v*'
   workflow_dispatch:
