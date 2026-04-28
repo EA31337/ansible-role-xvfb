@@ -1,5 +1,5 @@
 # Dockerfile for ea31337.xvfb Ansible role
-FROM ubuntu:noble
+FROM {{ docker_image | default('ubuntu:noble') }}
 
 LABEL org.opencontainers.image.source=https://github.com/EA31337/ansible-role-xvfb
 LABEL org.opencontainers.image.description="Xvfb (X virtual framebuffer) container based on ea31337.xvfb Ansible role"
@@ -20,7 +20,8 @@ WORKDIR /etc/ansible/roles/ea31337.xvfb
 COPY . .
 
 # Create a local playbook to apply the role
-RUN printf -- "---\n- hosts: localhost\n  connection: local\n  roles:\n    - ea31337.xvfb\n" > /tmp/playbook.yml && \
+RUN ansible-galaxy collection install -r requirements.yml && \
+    printf -- "---\n- hosts: localhost\n  connection: local\n  roles:\n    - ea31337.xvfb\n" > /tmp/playbook.yml && \
     ansible-playbook /tmp/playbook.yml && \
     rm /tmp/playbook.yml
 
