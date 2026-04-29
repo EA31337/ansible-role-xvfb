@@ -5,6 +5,7 @@ name: Molecule
 on:
   pull_request:
     paths-ignore:
+      - '.devcontainer/**'
       - '.github/workflows/cogni-ai-agent.yml'
       - '.github/workflows/copilot-setup-steps.yml'
       - '.github/workflows/galaxy-publish.yml'
@@ -15,6 +16,7 @@ on:
       - Pipfile*
   push:
     paths-ignore:
+      - '.devcontainer/**'
       - '.github/workflows/cogni-ai-agent.yml'
       - '.github/workflows/copilot-setup-steps.yml'
       - '.github/workflows/galaxy-publish.yml'
