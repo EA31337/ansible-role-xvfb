@@ -49,12 +49,12 @@ jobs:
           path: ${{ github.repository }}
           persist-credentials: false  # Prevents Duplicate header: "Authorization" error.
       - name: Cache Ansible collections
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: ${{ github.repository }}/collections
           key: ${{ runner.os }}-ansible-collections-${{ hashFiles(format('{0}/requirements.yml', github.repository)) }}
       - name: Cache pip
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: ~/.cache/pip
           key: ${{ runner.os }}-pip-${{ hashFiles(format('{0}/Pipfile*', github.repository)) }}
