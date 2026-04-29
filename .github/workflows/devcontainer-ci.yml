@@ -1,6 +1,7 @@
 ---
 # Note: Keep keys and envs in alphabetical order.
 name: Development Containers (CI)
+
 # yamllint disable-line rule:truthy
 on:
   pull_request:
@@ -17,9 +18,66 @@ on:
   schedule:
     - cron: 0 0 * * 1  # Run every Monday at 00:00 UTC
   workflow_dispatch:
+
 jobs:
   devcontainer:
-    uses: EA31337/.github/.github/workflows/devcontainer-ci.yml@master
+    name: Build and Test DevContainer
     permissions:
       contents: read
       packages: write
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+        with:
+          path: ${{ github.repository }}
+          persist-credentials: false
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to the Container registry
+        uses: docker/login-action@v3
+        with:
+          password: ${{ secrets.GITHUB_TOKEN }}
+          registry: ghcr.io
+          username: ${{ github.actor }}
+
+      - name: Build and push dev container
+        uses: devcontainers/ci-action@v0.3
+        with:
+          cacheFrom: ghcr.io/${{ github.repository }}/devcontainer
+          imageName: ghcr.io/${{ github.repository }}/devcontainer
+          push: ${{ github.event_name != 'pull_request' }}
+          subFolder: ${{ github.repository }}
+
+      - name: Set up Python
+        uses: actions/setup-python@v6.1.0
+        with:
+          python-version: '3.11'
+
+      - name: Install Python's requirements
+        run: pip install -r .devcontainer/requirements.txt
+        working-directory: ${{ github.repository }}
+
+      - name: Install Ansible Galaxy requirements
+        run: ansible-galaxy install -r requirements.yml
+        working-directory: ${{ github.repository }}
+
+      - name: Install Ansible Galaxy local requirements
+        run: |
+          jinja2 requirements-local.yml.j2 -D "pwd=$PWD" -o requirements-local.yml
+          ansible-galaxy install -r requirements-local.yml && rm requirements-local.yml
+        working-directory: ${{ github.repository }}
+
+      - name: Run Ansible playbook on the built image
+        run: |
+          ansible-playbook -i tests/inventory/test-docker.yml tests/playbooks/test-docker.yml \
+            -e "xvfb_test_image=ghcr.io/${{ github.repository }}/devcontainer" \
+            -e "xvfb_test_pull=false"
+        working-directory: ${{ github.repository }}
+
+      # Debug with tmate on failure when debug logging is enabled.
+      - if: ${{ failure() && runner.debug == '1' }}
+        uses: mxschmitt/action-tmate@v3
+    timeout-minutes: 60

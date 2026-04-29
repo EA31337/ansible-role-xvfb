@@ -34,7 +34,7 @@
             state: started
             command: sleep infinity
             recreate: true
-            pull: true
+            pull: "{{ xvfb_test_pull | default(true) | bool }}"
 
         - name: Wait for container to be ready
           community.docker.docker_container_info:
