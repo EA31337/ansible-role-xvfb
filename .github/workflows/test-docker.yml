@@ -24,6 +24,9 @@ on:
 jobs:
   test-docker:
     name: Test Docker Image
+    permissions:
+      contents: read
+      packages: read
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
@@ -49,6 +52,13 @@ jobs:
           jinja2 requirements-local.yml.j2 -D "pwd=$PWD" -o requirements-local.yml
           ansible-galaxy install -r requirements-local.yml && rm requirements-local.yml
         working-directory: ${{ github.repository }}
+
+      - name: Log in to the Container registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Run Ansible playbook on Docker image
         run: |
