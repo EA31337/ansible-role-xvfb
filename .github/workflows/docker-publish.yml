@@ -42,11 +42,13 @@ jobs:
 
       - name: Extract metadata (tags, labels) for Docker
         id: meta
+        env:
+          IS_DEFAULT_BRANCH: ${{ github.ref == format('refs/heads/{0}', github.event.repository.default_branch) }}
         uses: docker/metadata-action@v5
         with:
           images: ghcr.io/${{ github.repository }}
           tags: |
-            type=edge,branch=master
+            type=raw,value=latest,enable=${{ github.event_name == 'push' && env.IS_DEFAULT_BRANCH == 'true' }}
             type=ref,event=branch
             type=ref,event=tag
 
