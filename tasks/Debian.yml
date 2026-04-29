@@ -18,7 +18,7 @@
   environment:
     DEBIAN_FRONTEND: noninteractive
 
-- name: Ensure Xvfb is service installed
+- name: Ensure Xvfb service is installed
   become: "{{ ansible_user_id != 'root' }}"
   when: xvfb_service_enabled
   block:
