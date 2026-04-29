@@ -19,7 +19,7 @@
   hosts: docker_containers
 
   vars:
-    xvfb_test_image: "ghcr.io/ea31337/ansible-role-xvfb:master"
+    xvfb_test_image: "ghcr.io/ea31337/ansible-role-xvfb:latest"
 
   pre_tasks:
     - name: Manage Docker container lifecycle
