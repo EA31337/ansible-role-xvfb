@@ -91,6 +91,19 @@ To pull the latest image:
 docker pull ghcr.io/ea31337/ansible-role-xvfb:latest
 ```
 
+### Supported Tags
+
+The following tags are available for `ghcr.io/ea31337/ansible-role-xvfb`:
+
+- `latest`: Latest version (based on `ubuntu-latest`).
+- `alpine-latest`: Based on `alpine:latest`.
+- `debian-latest`: Based on `debian:latest`.
+- `nixos-latest`: Based on `nixos/nix:latest`.
+- `ubuntu-jammy`: Based on `ubuntu:jammy`.
+- `ubuntu-noble`: Based on `ubuntu:noble`.
+- `ubuntu-latest`: Based on `ubuntu:latest`.
+- `v1.0.4`: Release v1.0.4.
+
 ## License
 
 GNU GPL v3
