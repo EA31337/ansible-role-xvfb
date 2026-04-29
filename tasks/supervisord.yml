@@ -100,12 +100,14 @@
       changed_when: false
       register: supervisord_status
       failed_when: false
+      when: xvfb_service_manage | bool
 
     - name: Remove stale supervisor socket if not running
       ansible.builtin.file:
         path: "{{ supervisor_unix_http_server_file }}"
         state: absent
       when:
+        - xvfb_service_manage | bool
         - supervisord_status.rc != 0
         - supervisor_unix_http_server_file is defined
         - supervisor_unix_http_server_file | length > 0
@@ -115,20 +117,25 @@
         path: "{{ supervisor_supervisord_pidfile }}"
         state: absent
       when:
+        - xvfb_service_manage | bool
         - supervisord_status.rc != 0
         - supervisor_supervisord_pidfile is defined
         - supervisor_supervisord_pidfile | length > 0
 
     - name: Start supervisord daemon
       ansible.builtin.command: supervisord -c "{{ supervisor_conf_file }}"
-      when: supervisord_status.rc != 0
+      when:
+        - xvfb_service_manage | bool
+        - supervisord_status.rc != 0
       changed_when: true
 
     - name: Wait for supervisor socket to be available
       ansible.builtin.wait_for:
         path: "{{ supervisor_unix_http_server_file | default('/var/run/supervisor.sock', true) }}"
         timeout: 30
-      when: supervisord_status.rc != 0
+      when:
+        - xvfb_service_manage | bool
+        - supervisord_status.rc != 0
 
     - name: Update supervisor to include new programs
       # noqa: no-handler command-instead-of-module - We need to update supervisor before continuing
@@ -140,4 +147,6 @@
       changed_when: >-
         "added process group" in supervisor_update.stdout or
         "updated process group" in supervisor_update.stdout
-      when: xvfb_service_enabled | bool
+      when:
+        - xvfb_service_enabled | bool
+        - xvfb_service_manage | bool

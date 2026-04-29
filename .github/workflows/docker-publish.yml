@@ -89,12 +89,13 @@ jobs:
             type=semver,pattern={{version}}-${{ matrix.platform }}
             # Distro rolling tags: ubuntu-noble
             type=raw,value=${{ matrix.platform }},enable=${{ env.IS_RELEASE == 'true' }}
-            # Branch-specific platform tags: master-ubuntu-noble
-            type=ref,event=branch,suffix=-${{ matrix.platform }}
+            # Branch-specific platform tags: latest-ubuntu-noble (for default branch)
+            type=raw,value=latest-${{ matrix.platform }},enable=${{ env.IS_DEFAULT_BRANCH == 'true' }}
+            type=ref,event=branch,suffix=-${{ matrix.platform }},enable=${{ env.IS_DEFAULT_BRANCH == 'false' }}
             # Global rolling tags (only for default platform)
             type=semver,pattern={{version}},enable=${{ matrix.is_default == true }}
             type=raw,value=latest,enable=${{ matrix.is_default == true && env.IS_RELEASE == 'true' }}
-            type=ref,event=branch,enable=${{ matrix.is_default == true }}
+            type=ref,event=branch,enable=${{ matrix.is_default == true && env.IS_DEFAULT_BRANCH == 'false' }}
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v5
