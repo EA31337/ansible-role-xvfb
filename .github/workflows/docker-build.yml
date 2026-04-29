@@ -1,0 +1,124 @@
+---
+# Note: Keep keys and envs in alphabetical order.
+name: Docker Build
+
+on:
+  pull_request:
+  push:
+    branches-ignore:
+      - master
+  workflow_call:
+    inputs:
+      push:
+        default: false
+        description: Push image to registry
+        type: boolean
+
+jobs:
+  build:
+    name: Build
+    permissions:
+      contents: read
+      packages: write
+    runs-on: ubuntu-latest
+    env:
+      IS_DEFAULT_BRANCH: ${{ github.ref == format('refs/heads/{0}', github.event.repository.default_branch) }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - image: i386/alpine:latest
+            is_default: false
+            platform: alpine-latest
+          - image: debian:latest
+            is_default: false
+            platform: debian-latest
+          - image: nixos/nix:latest
+            is_default: false
+            platform: nixos-latest
+          - image: ubuntu:jammy
+            is_default: false
+            platform: ubuntu-jammy
+          - image: ubuntu:noble
+            is_default: false
+            platform: ubuntu-noble
+          - image: ubuntu:latest
+            is_default: true
+            platform: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v6.1.0
+        with:
+          python-version: '3.11'
+
+      - name: Cache pip
+        uses: actions/cache@v5
+        with:
+          key: ${{ runner.os }}-pip-${{ hashFiles('.devcontainer/requirements.txt') }}
+          path: ~/.cache/pip
+          restore-keys: |
+            ${{ runner.os }}-pip-
+
+      - name: Log in to the Container registry
+        if: ${{ inputs.push || github.event_name == 'push' }}
+        uses: docker/login-action@v3
+        with:
+          password: ${{ secrets.GITHUB_TOKEN }}
+          registry: ghcr.io
+          username: ${{ github.actor }}
+
+      - name: Install dependencies
+        run: |
+          python3 -m pip install --upgrade pip
+          pip install -r .devcontainer/requirements.txt
+
+      - name: Render Dockerfile
+        run: jinja2 Dockerfile.j2 -D docker_image='${{ matrix.image }}' > Dockerfile
+
+      - name: Extract metadata (tags, labels) for Docker
+        id: meta
+        env:
+          IS_RELEASE: ${{ env.IS_DEFAULT_BRANCH == 'true' || startsWith(github.ref, 'refs/tags/v') }}
+        uses: docker/metadata-action@v5
+        with:
+          images: ghcr.io/${{ github.repository }}
+          tags: |
+            # Immutable versioned tags: v1.0.4-ubuntu-noble
+            type=semver,pattern={{version}}-${{ matrix.platform }}
+            # Distro rolling tags: ubuntu-noble
+            type=raw,value=${{ matrix.platform }},enable=${{ env.IS_RELEASE == 'true' }}
+            # Branch-specific platform tags: latest-ubuntu-noble (for default branch)
+            type=raw,value=latest-${{ matrix.platform }},enable=${{ env.IS_DEFAULT_BRANCH == 'true' }}
+            type=ref,event=branch,suffix=-${{ matrix.platform }},enable=${{ env.IS_DEFAULT_BRANCH == 'false' }}
+            # Global rolling tags (only for default platform)
+            type=semver,pattern={{version}},enable=${{ matrix.is_default == true }}
+            type=raw,value=latest,enable=${{ matrix.is_default == true && env.IS_RELEASE == 'true' }}
+            type=ref,event=branch,enable=${{ matrix.is_default == true && env.IS_DEFAULT_BRANCH == 'false' }}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          context: .
+          labels: ${{ steps.meta.outputs.labels }}
+          load: ${{ !inputs.push }}
+          push: ${{ inputs.push || false }}
+          tags: ${{ steps.meta.outputs.tags }}
+
+      - name: Test Docker image
+        run: |
+          TAG=$(echo "${{ steps.meta.outputs.tags }}" | head -n 1)
+          if [ "${{ inputs.push }}" != "true" ]; then
+            docker run --rm "$TAG" which supervisord Xvfb
+          else
+            docker pull "$TAG"
+            docker run --rm "$TAG" which supervisord Xvfb
+          fi
