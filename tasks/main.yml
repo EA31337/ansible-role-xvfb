@@ -21,4 +21,6 @@
     config: "{{ supervisor_conf_file | default(omit) }}"
     name: xvfb
     state: started
-  when: xvfb_service_enabled | bool
+  when:
+    - xvfb_service_enabled | bool
+    - xvfb_service_manage | bool

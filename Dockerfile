@@ -21,7 +21,7 @@ COPY . .
 
 # Create a local playbook to apply the role
 RUN ansible-galaxy collection install -r requirements.yml && \
-    printf -- "---\n- hosts: localhost\n  connection: local\n  roles:\n    - ea31337.xvfb\n" > /tmp/playbook.yml && \
+    printf -- "---\n- hosts: localhost\n  connection: local\n  roles:\n    - role: ea31337.xvfb\n  vars:\n    xvfb_service_manage: false\n" > /tmp/playbook.yml && \
     ansible-playbook /tmp/playbook.yml && \
     rm /tmp/playbook.yml
 

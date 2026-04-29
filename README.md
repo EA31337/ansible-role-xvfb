@@ -88,7 +88,7 @@ and on new tags.
 To pull the latest image:
 
 ```shell
-docker pull ghcr.io/ea31337/ansible-role-xvfb:master
+docker pull ghcr.io/ea31337/ansible-role-xvfb:latest
 ```
 
 ## License
