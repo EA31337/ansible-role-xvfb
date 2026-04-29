@@ -67,7 +67,7 @@ jobs:
             ${{ runner.os }}-pip-
 
       - name: Log in to the Container registry
-        if: ${{ inputs.push || github.event_name == 'push' }}
+        if: ${{ inputs.push }}
         uses: docker/login-action@v3
         with:
           password: ${{ secrets.GITHUB_TOKEN }}
@@ -97,6 +97,7 @@ jobs:
             # Branch-specific platform tags: latest-ubuntu-noble (for default branch)
             type=raw,value=latest-${{ matrix.platform }},enable=${{ env.IS_DEFAULT_BRANCH == 'true' }}
             type=ref,event=branch,suffix=-${{ matrix.platform }},enable=${{ env.IS_DEFAULT_BRANCH == 'false' }}
+            type=ref,event=pr,suffix=-${{ matrix.platform }}
             # Global rolling tags (only for default platform)
             type=semver,pattern={{version}},enable=${{ matrix.is_default == true }}
             type=raw,value=latest,enable=${{ matrix.is_default == true && env.IS_RELEASE == 'true' }}
@@ -116,9 +117,7 @@ jobs:
       - name: Test Docker image
         run: |
           TAG=$(echo "${{ steps.meta.outputs.tags }}" | head -n 1)
-          if [ "${{ inputs.push }}" != "true" ]; then
-            docker run --rm "$TAG" which supervisord Xvfb
-          else
+          if [ "${{ inputs.push }}" = "true" ]; then
             docker pull "$TAG"
-            docker run --rm "$TAG" which supervisord Xvfb
           fi
+          docker run --rm "$TAG" which supervisord Xvfb
