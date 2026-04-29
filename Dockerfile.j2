@@ -7,6 +7,12 @@ LABEL org.opencontainers.image.description="Xvfb (X virtual framebuffer) contain
 ENV DEBIAN_FRONTEND=noninteractive
 
 # Install Ansible and dependencies
+{% if 'alpine' in (docker_image | default('ubuntu:noble')) %}
+RUN apk add --no-cache ansible sudo python3 bash ca-certificates
+{% elif 'nixos' in (docker_image | default('ubuntu:noble')) %}
+RUN nix-channel --update && \
+    nix-env -iA nixpkgs.ansible nixpkgs.procps nixpkgs.python3 nixpkgs.python3Packages.pip nixpkgs.sudo
+{% else %}
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
     ansible \
@@ -14,6 +20,7 @@ RUN apt-get update && \
     python3-pip \
     sudo && \
     rm -rf /var/lib/apt/lists/*
+{% endif %}
 
 # Copy the role into the container
 WORKDIR /etc/ansible/roles/ea31337.xvfb
