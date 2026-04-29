@@ -15,29 +15,6 @@ jobs:
       contents: read
       packages: write
     runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - image: i386/alpine:latest
-            is_default: false
-            platform: alpine-latest
-          - image: debian:latest
-            is_default: false
-            platform: debian-latest
-          - image: nixos/nix:latest
-            is_default: false
-            platform: nixos-latest
-          - image: ubuntu:jammy
-            is_default: false
-            platform: ubuntu-jammy
-          - image: ubuntu:noble
-            is_default: false
-            platform: ubuntu-noble
-          - image: ubuntu:latest
-            is_default: true
-            platform: ubuntu-latest
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v6
@@ -90,3 +67,25 @@ jobs:
         run: |
           TAG=$(echo "${{ steps.meta.outputs.tags }}" | head -n 1)
           docker run --rm "$TAG" which supervisord Xvfb
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - image: i386/alpine:latest
+            is_default: false
+            platform: alpine-latest
+          - image: debian:latest
+            is_default: false
+            platform: debian-latest
+          - image: nixos/nix:latest
+            is_default: false
+            platform: nixos-latest
+          - image: ubuntu:jammy
+            is_default: false
+            platform: ubuntu-jammy
+          - image: ubuntu:noble
+            is_default: false
+            platform: ubuntu-noble
+          - image: ubuntu:latest
+            is_default: true
+            platform: ubuntu-latest
