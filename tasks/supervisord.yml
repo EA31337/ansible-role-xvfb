@@ -54,7 +54,7 @@
         src: "{{ supervisor_conf_file }}"
       register: supervisor_conf_content
 
-    - name: Read include.files and pidfile from supervisor configuration file
+    - name: Read include.files, pidfile and socket from supervisor configuration file
       ansible.builtin.set_fact:
         supervisor_include_files: >-
           {{ (supervisor_conf_content.content | b64decode | community.general.from_ini).get('include', {})
@@ -62,6 +62,9 @@
         supervisor_supervisord_pidfile: >-
           {{ (supervisor_conf_content.content | b64decode | community.general.from_ini).get('supervisord', {})
             .get('pidfile', '').split(';')[0].split('#')[0] | trim }}
+        supervisor_unix_http_server_file: >-
+          {{ (supervisor_conf_content.content | b64decode | community.general.from_ini).get('unix_http_server', {})
+            .get('file', '').split(';')[0].split('#')[0] | trim }}
 
     - name: Read include's dir and extension from supervisor configuration file
       ansible.builtin.set_fact:
@@ -90,20 +93,51 @@
 
     - name: Check if supervisord is running
       # noqa: command-instead-of-module - supervisorctl doesn't support checking for pid.
-      ansible.builtin.command: supervisorctl pid
+      ansible.builtin.command: >-
+        supervisorctl
+        {% if supervisor_conf_file is defined %}-c "{{ supervisor_conf_file }}"{% endif %}
+        pid
       changed_when: false
       register: supervisord_status
-      failed_when: supervisord_status.rc not in [0, 7]
+      failed_when: false
+
+    - name: Remove stale supervisor socket if not running
+      ansible.builtin.file:
+        path: "{{ supervisor_unix_http_server_file }}"
+        state: absent
+      when:
+        - supervisord_status.rc != 0
+        - supervisor_unix_http_server_file is defined
+        - supervisor_unix_http_server_file | length > 0
+
+    - name: Remove stale supervisor pid if not running
+      ansible.builtin.file:
+        path: "{{ supervisor_supervisord_pidfile }}"
+        state: absent
+      when:
+        - supervisord_status.rc != 0
+        - supervisor_supervisord_pidfile is defined
+        - supervisor_supervisord_pidfile | length > 0
 
     - name: Start supervisord daemon
       ansible.builtin.command: supervisord -c "{{ supervisor_conf_file }}"
-      args:
-        creates: "{{ supervisor_supervisord_pidfile | default('/var/run/supervisord.sock', true) }}"
-      when: supervisord_status.rc == 7
+      when: supervisord_status.rc != 0
+      changed_when: true
+
+    - name: Wait for supervisor socket to be available
+      ansible.builtin.wait_for:
+        path: "{{ supervisor_unix_http_server_file | default('/var/run/supervisor.sock', true) }}"
+        timeout: 30
+      when: supervisord_status.rc != 0
 
     - name: Update supervisor to include new programs
       # noqa: no-handler command-instead-of-module - We need to update supervisor before continuing
-      ansible.builtin.command: supervisorctl update
+      ansible.builtin.command: >-
+        supervisorctl
+        {% if supervisor_conf_file is defined %}-c "{{ supervisor_conf_file }}"{% endif %}
+        update
       register: supervisor_update
-      changed_when: xvfb_supervisor_conf.changed
-      when: xvfb_service_enabled | bool and xvfb_supervisor_conf.changed
+      changed_when: >-
+        "added process group" in supervisor_update.stdout or
+        "updated process group" in supervisor_update.stdout
+      when: xvfb_service_enabled | bool

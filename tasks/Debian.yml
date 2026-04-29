@@ -1,10 +1,10 @@
 ---
 - name: Ensures Xvfb package is installed
   ansible.builtin.apt:
-    install_recommends: !!str no
+    install_recommends: false
     name: xvfb
     state: present
-    update_cache: !!str yes
+    update_cache: true
   become: "{{ ansible_user_id != 'root' }}"
   environment:
     DEBIAN_FRONTEND: noninteractive
@@ -18,7 +18,7 @@
   environment:
     DEBIAN_FRONTEND: noninteractive
 
-- name: Ensure Xvfb is service installed
+- name: Ensure Xvfb service is installed
   become: "{{ ansible_user_id != 'root' }}"
   when: xvfb_service_enabled
   block:
@@ -37,10 +37,11 @@
 
 - name: Clean apt cache and perform package housekeeping
   ansible.builtin.apt:
-    autoclean: !!str yes
-    autoremove: !!str yes
-    purge: !!str yes
-    update_cache: !!str yes
+    autoclean: true
+    autoremove: true
+    purge: true
+    update_cache: true
   become: "{{ ansible_user_id != 'root' }}"
+  changed_when: false
   environment:
     DEBIAN_FRONTEND: noninteractive

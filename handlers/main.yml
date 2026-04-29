@@ -3,6 +3,7 @@
 
 - name: All services are present
   community.general.supervisorctl:
+    config: "{{ supervisor_conf_file | default(omit) }}"
     name: all
     state: present
   changed_when: true
@@ -10,6 +11,7 @@
 
 - name: Restart Xvfb service
   community.general.supervisorctl:
+    config: "{{ supervisor_conf_file | default(omit) }}"
     name: xvfb
     state: restarted
   changed_when: true

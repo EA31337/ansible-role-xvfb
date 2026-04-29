@@ -18,6 +18,7 @@
 - name: Ensure Xvfb is started via supervisor
   become: "{{ ansible_user_id != 'root' }}"
   community.general.supervisorctl:
+    config: "{{ supervisor_conf_file | default(omit) }}"
     name: xvfb
     state: started
   when: xvfb_service_enabled | bool
