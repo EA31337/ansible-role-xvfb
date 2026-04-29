@@ -1,4 +1,5 @@
 ---
+# Ansible playbook file. Can be run with: ansible-playbook .devcontainer/provision.yml
 - name: Provision dev container
   hosts: localhost
   connection: local
