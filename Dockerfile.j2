@@ -36,4 +36,4 @@ RUN ansible-galaxy collection install -r requirements.yml && \
 EXPOSE 6000
 
 # Start supervisord to manage Xvfb
-CMD ["supervisord", "-n", "-c", "/etc/supervisor/supervisord.conf"]
+CMD ["/usr/bin/supervisord", "-n", "-c", "/etc/supervisor/supervisord.conf"]
