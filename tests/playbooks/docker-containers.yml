@@ -43,16 +43,16 @@
         ansible_python_interpreter: "{{ controller_python }}"
 
 - name: Configure Docker container
-  # Note: Since facts are not gathered, we're checking for ansible_user_id, connection_user or UID instead.
+  # Note: Since facts are not gathered, we're checking for ansible_facts['user_id'], connection_user or UID instead.
   become: >-
     {{
       (connection_user | default('root')) != 'root'
-      or (ansible_user_id | default('root')) != 'root'
-      or (ansible_user_uid | default(0) | int) != 0
-      or (((ansible_env | default({}))['UID'] | default(0) | int) != 0)
+      or (ansible_facts['user_id'] | default('root')) != 'root'
+      or (ansible_facts['user_uid'] | default(0) | int) != 0
+      or (((ansible_facts['env'] | default({}))['UID'] | default(0) | int) != 0)
       or (
-        ((ansible_env | default({}))['USER']
-        | default(((ansible_env | default({}))['LOGNAME'] | default('root'))) )
+        ((ansible_facts['env'] | default({}))['USER']
+        | default(((ansible_facts['env'] | default({}))['LOGNAME'] | default('root'))) )
         != 'root'
       )
     }}
@@ -145,7 +145,7 @@
     - name: Set ansible_os_family for NixOS hosts
       ansible.builtin.set_fact:
         ansible_os_family: NixOS
-      when: (ansible_distribution == 'NixOS') or ('nixos' in (inventory_hostname | lower))
+      when: (ansible_facts['distribution'] == 'NixOS') or ('nixos' in (inventory_hostname | lower))
   tasks:
     - name: Installs ea31337.xvfb role
       ansible.builtin.import_role:

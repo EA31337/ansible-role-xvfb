@@ -5,7 +5,7 @@
     name: xvfb
     state: present
     update_cache: true
-  become: "{{ ansible_user_id != 'root' }}"
+  become: "{{ ansible_facts['user_id'] | default('root') != 'root' }}"
   environment:
     DEBIAN_FRONTEND: noninteractive
 
@@ -13,13 +13,13 @@
   ansible.builtin.apt:
     name: x11-utils
     state: present
-  become: "{{ ansible_user_id != 'root' }}"
+  become: "{{ ansible_facts['user_id'] | default('root') != 'root' }}"
   when: xvfb_install_x11_utils
   environment:
     DEBIAN_FRONTEND: noninteractive
 
 - name: Ensure Xvfb service is installed
-  become: "{{ ansible_user_id != 'root' }}"
+  become: "{{ ansible_facts['user_id'] | default('root') != 'root' }}"
   when: xvfb_service_enabled
   block:
 
@@ -41,7 +41,7 @@
     autoremove: true
     purge: true
     update_cache: true
-  become: "{{ ansible_user_id != 'root' }}"
+  become: "{{ ansible_facts['user_id'] | default('root') != 'root' }}"
   changed_when: false
   environment:
     DEBIAN_FRONTEND: noninteractive
