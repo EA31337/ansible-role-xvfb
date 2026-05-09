@@ -53,8 +53,8 @@ jobs:
         with:
           cache: pip
           cache-dependency-path: |
-            .devcontainer/requirements.txt
-            Pipfile*
+            ${{ github.repository }}/.devcontainer/requirements.txt
+            ${{ github.repository }}/Pipfile*
           python-version: '3.12'
       - name: Cache Ansible collections
         uses: actions/cache@v5
