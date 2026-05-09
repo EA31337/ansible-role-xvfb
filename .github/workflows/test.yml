@@ -35,12 +35,12 @@ jobs:
           persist-credentials: false  # Prevents Duplicate header: "Authorization" error.
 
       - name: Set up Python
-        uses: actions/setup-python@v6
+        uses: actions/setup-python@v6.1.0
         with:
           cache: pip
           cache-dependency-path: |
-            ${{ github.repository }}/.devcontainer/requirements.txt
-            ${{ github.repository }}/Pipfile*
+            .devcontainer/requirements.txt
+            Pipfile*
           python-version: '3.12'
 
       - name: Install Python's requirements

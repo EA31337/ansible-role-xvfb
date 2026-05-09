@@ -23,7 +23,7 @@ jobs:
         uses: docker/setup-buildx-action@v3
 
       - name: Set up Python
-        uses: actions/setup-python@v6
+        uses: actions/setup-python@v6.1.0
         with:
           cache: pip
           cache-dependency-path: |
