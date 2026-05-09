@@ -43,5 +43,6 @@
     update_cache: true
   become: "{{ ansible_facts['user_id'] | default('root') != 'root' }}"
   changed_when: false
+  no_log: "{{ ansible_verbosity | default(0) < 1 }}"
   environment:
     DEBIAN_FRONTEND: noninteractive

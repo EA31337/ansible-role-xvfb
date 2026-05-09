@@ -42,6 +42,8 @@
             dest: "{{ molecule_ephemeral_directory }}/ca-certificates/"
             mode: "0644"
           loop: "{{ host_ca_certs }}"
+          loop_control:
+            label: "{{ item | basename }}"
 
         - name: Render Dockerfiles
           ansible.builtin.template:
@@ -49,6 +51,8 @@
             dest: "{{ molecule_ephemeral_directory }}/{{ item.name }}.Dockerfile"
             mode: "0644"
           loop: "{{ molecule_yml.platforms | selectattr('dockerfile', 'defined') | list }}"
+          loop_control:
+            label: "{{ item.name }}"
 
         - name: Build custom images
           community.docker.docker_image:
@@ -60,6 +64,9 @@
             source: build
             force_source: true
           loop: "{{ molecule_yml.platforms | selectattr('dockerfile', 'defined') | list }}"
+          loop_control:
+            label: "{{ item.name }}"
+          no_log: "{{ ansible_verbosity | default(0) < 1 }}"
 
     - name: Ensure test containers are running
       community.docker.docker_container:
@@ -78,7 +85,10 @@
           {{ [molecule_ephemeral_directory ~ '/ca-certificates:/usr/local/share/ca-certificates:ro']
              if host_ca_certs | length > 0 else omit }}
       loop: "{{ molecule_yml.platforms }}"
+      loop_control:
+        label: "{{ item.name }}"
       register: container_results
+      no_log: "{{ ansible_verbosity | default(0) < 1 }}"
       # Allow enough time for image pulls/builds in constrained CI environments.
       async: 7200
       poll: 0
@@ -87,6 +97,8 @@
       ansible.builtin.async_status:
         jid: "{{ item.ansible_job_id }}"
       loop: "{{ container_results.results }}"
+      loop_control:
+        label: "{{ item.item.name }}"
       register: async_job_results
       until: async_job_results.finished
       retries: 300

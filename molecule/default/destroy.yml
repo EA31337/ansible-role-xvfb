@@ -23,7 +23,10 @@
         name: "{{ item.name }}"
         state: absent
       loop: "{{ molecule_yml.platforms }}"
+      loop_control:
+        label: "{{ item.name }}"
       register: container_results
+      no_log: "{{ ansible_verbosity | default(0) < 1 }}"
       async: 7200
       poll: 0
 
@@ -31,6 +34,8 @@
       ansible.builtin.async_status:
         jid: "{{ item.ansible_job_id }}"
       loop: "{{ container_results.results }}"
+      loop_control:
+        label: "{{ item.item.name }}"
       register: async_results
       until: async_results.finished
       retries: 300
