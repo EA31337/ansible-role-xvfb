@@ -67,6 +67,9 @@ jobs:
       - name: Run Ansible playbook
         run: |
           ansible-playbook -i tests/inventory/docker-containers.yml tests/playbooks/docker-containers.yml
+        env:
+          ANSIBLE_DISPLAY_OK_HOSTS: 'no'
+          ANSIBLE_DISPLAY_SKIPPED_HOSTS: 'no'
         working-directory: ${{ github.repository }}
 
       # Debug with tmate on failure when debug logging is enabled.
