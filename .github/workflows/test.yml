@@ -23,6 +23,7 @@ on:
       - '**/*.md'
       - '.*'
       - Pipfile*
+  workflow_dispatch:
 
 jobs:
   test:

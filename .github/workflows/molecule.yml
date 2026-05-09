@@ -25,6 +25,7 @@ on:
       - '.*'
       - LICENSE
       - Pipfile*
+  workflow_dispatch:
 
 jobs:
   test:
