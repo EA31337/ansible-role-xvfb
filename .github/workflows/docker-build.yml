@@ -4,9 +4,27 @@ name: Docker Build
 
 on:
   pull_request:
+    paths-ignore:
+      - '.devcontainer/**'
+      - '.github/workflows/cogni-ai-agent.yml'
+      - '.github/workflows/cogni-ai-agent-sudo.yml'
+      - '.github/workflows/copilot-setup-steps.yml'
+      - '**.cfg'
+      - '**.md'
+      - '.*'
+      - Pipfile*
   push:
     branches-ignore:
       - master
+    paths-ignore:
+      - '.devcontainer/**'
+      - '.github/workflows/cogni-ai-agent.yml'
+      - '.github/workflows/cogni-ai-agent-sudo.yml'
+      - '.github/workflows/copilot-setup-steps.yml'
+      - '**.cfg'
+      - '**.md'
+      - '.*'
+      - Pipfile*
 
 jobs:
   build:
