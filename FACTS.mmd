@@ -1,0 +1,34 @@
+%% FACTS.mmd
+%% Note: Keep items in alphabetical order.
+mindmap
+  root((ansible-role-xvfb))
+    Architecture
+      Components
+        "defaults::RoleDefaults"
+        "handlers::ServiceHandlers"
+        "tasks::OSSpecificInstall"
+        "tasks::SupervisorSetup"
+        "vars::OSSpecificPackages"
+      "Role::ansible-role-xvfb"
+    Context
+      "Deployment::Unix_Platforms"
+      "Language::Python_3.10+"
+      "License::GNU_GPL_v3"
+      "Organization::EA31337"
+      "Purpose::Install_Xvfb_Virtual_Framebuffer"
+    Ecosystem
+      Dependencies
+        AnsibleCollections
+          "community.docker"
+          "community.general::>=_10.6.0"
+        System
+          "Python::3.10+"
+      Tools
+        Linters
+          "ansible-lint"
+          "j2lint"
+          "markdownlint"
+          "yamllint"
+        Testing
+          "Docker::Containers"
+          "Molecule::Scenarios"
