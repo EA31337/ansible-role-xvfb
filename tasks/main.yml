@@ -7,8 +7,9 @@
 - name: Set OS family fact
   ansible.builtin.set_fact:
     xvfb_os_family: >-
-      {{ 'NixOS' if (ansible_facts['os_family'] == 'OtherLinux' and xvfb_nix_store_stat.stat.exists)
-      else ansible_facts['os_family'] }}
+      {{ 'NixOS' if (ansible_facts.os_family | default(ansible_os_family | default('Unknown')) == 'OtherLinux'
+      and xvfb_nix_store_stat.stat.exists)
+      else ansible_facts.os_family | default(ansible_os_family | default('Unknown')) }}
 
 - name: Includes operating system specific tasks to install Xvfb
   ansible.builtin.include_tasks:
@@ -16,7 +17,7 @@
   tags: xvfb
 
 - name: Ensure Xvfb is started via supervisor
-  become: "{{ ansible_facts['user_id'] | default('root') != 'root' }}"
+  become: "{{ ansible_facts.user_id | default(ansible_user_id | default('root')) != 'root' }}"
   community.general.supervisorctl:
     config: "{{ supervisor_conf_file | default(omit) }}"
     name: xvfb
@@ -24,3 +25,28 @@
   when:
     - xvfb_service_enabled | bool
     - xvfb_service_manage | bool
+
+- name: Verify X display is working (via xdpyinfo)
+  ansible.builtin.command: xdpyinfo -display {{ xvfb_display | default(':0') | quote }}
+  register: xdpyinfo_check
+  changed_when: false
+  failed_when: false
+  no_log: "{{ ansible_verbosity | default(0) < 1 }}"
+  when:
+    - xvfb_install_x11_utils | default(false)
+    - xvfb_os_family != 'NixOS'
+
+- name: Fail if X display check failed
+  ansible.builtin.fail:
+    msg: >-
+      X display check failed (rc={{ xdpyinfo_check.rc | default('undefined') }}).
+      {% if xdpyinfo_check.rc | default(0) == 127 %}
+      The 'xdpyinfo' command is missing. Ensure 'x11-utils', 'xdpyinfo' or equivalent is installed.
+      {% else %}
+      X display is not available (DISPLAY={{ xvfb_display | default(':0') }}).
+      Ensure Xvfb or another X server is running.
+      {% endif %}
+  when:
+    - xvfb_install_x11_utils | default(false)
+    - xvfb_os_family != 'NixOS'
+    - xdpyinfo_check.rc | default(0) != 0

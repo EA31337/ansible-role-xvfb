@@ -49,7 +49,17 @@
 
 - name: Install ea31337.xvfb role on the container
   hosts: docker_containers
-  gather_facts: true
+  gather_facts: false
+  pre_tasks:
+    - name: Install Python 3
+      ansible.builtin.raw: |
+        (command -v python3) || (apk add -q --no-cache python3) ||
+        (apt-get update -y -qq && apt-get install -y -qq python3)
+      changed_when: false
+
+    - name: Gather facts
+      ansible.builtin.setup:
+
   tasks:
     - name: Installs ea31337.xvfb role
       ansible.builtin.import_role:

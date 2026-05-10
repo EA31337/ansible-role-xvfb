@@ -6,4 +6,4 @@ all:
         xvfb-on-package-image:
           ansible_connection: docker
           ansible_host: xvfb-on-package-image
-          ansible_python_interpreter: /usr/bin/python3
+          ansible_python_interpreter: auto_silent
