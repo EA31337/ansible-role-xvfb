@@ -26,7 +26,7 @@
     - xvfb_service_manage | bool
 
 - name: Verify X display is working (via xdpyinfo)
-  ansible.builtin.command: xdpyinfo -display {{ xvfb_display | default(':0') }}
+  ansible.builtin.command: xdpyinfo -display {{ xvfb_display | default(':0') | quote }}
   register: xdpyinfo_check
   changed_when: false
   failed_when: false
@@ -37,7 +37,7 @@
 
 - name: Fail if X display check failed
   ansible.builtin.fail:
-    fail_msg: >-
+    msg: >-
       X display check failed (rc={{ xdpyinfo_check.rc | default('undefined') }}).
       {% if xdpyinfo_check.rc | default(0) == 127 %}
       The 'xdpyinfo' command is missing. Ensure 'x11-utils', 'xdpyinfo' or equivalent is installed.
