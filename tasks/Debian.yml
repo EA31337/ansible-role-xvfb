@@ -9,11 +9,12 @@
   environment:
     DEBIAN_FRONTEND: noninteractive
 
-- name: Ensures X11 utils are installed
+- name: Ensures X11 utilities are installed
   ansible.builtin.apt:
     name: x11-utils
     state: present
   become: "{{ ansible_facts['user_id'] | default('root') != 'root' }}"
+  no_log: "{{ ansible_verbosity | default(0) < 1 }}"
   when: xvfb_install_x11_utils
   environment:
     DEBIAN_FRONTEND: noninteractive

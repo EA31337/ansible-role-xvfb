@@ -6,11 +6,12 @@
     state: present
     update_cache: true
 
-- name: Ensures libx11 package is installed
+- name: Ensures X11 utilities are installed
   become: "{{ ansible_facts['user_id'] | default('root') != 'root' }}"
   community.general.apk:
-    name: libx11
+    name: xdpyinfo
     state: present
+  no_log: "{{ ansible_verbosity | default(0) < 1 }}"
   when: xvfb_install_x11_utils
 
 - name: Ensure Xvfb is service installed

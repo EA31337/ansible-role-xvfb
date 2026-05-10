@@ -24,3 +24,28 @@
   when:
     - xvfb_service_enabled | bool
     - xvfb_service_manage | bool
+
+- name: Verify X display is working (via xdpyinfo)
+  ansible.builtin.command: xdpyinfo -display {{ xvfb_display | default(':0') }}
+  register: xdpyinfo_check
+  changed_when: false
+  failed_when: false
+  no_log: "{{ ansible_verbosity | default(0) < 1 }}"
+  when:
+    - xvfb_install_x11_utils | default(false)
+    - xvfb_os_family != 'NixOS'
+
+- name: Fail if X display check failed
+  ansible.builtin.fail:
+    fail_msg: >-
+      X display check failed (rc={{ xdpyinfo_check.rc | default('undefined') }}).
+      {% if xdpyinfo_check.rc | default(0) == 127 %}
+      The 'xdpyinfo' command is missing. Ensure 'x11-utils', 'xdpyinfo' or equivalent is installed.
+      {% else %}
+      X display is not available (DISPLAY={{ xvfb_display | default(':0') }}).
+      Ensure Xvfb or another X server is running.
+      {% endif %}
+  when:
+    - xvfb_install_x11_utils | default(false)
+    - xvfb_os_family != 'NixOS'
+    - xdpyinfo_check.rc | default(0) != 0
