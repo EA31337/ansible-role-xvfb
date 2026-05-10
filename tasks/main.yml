@@ -7,7 +7,8 @@
 - name: Set OS family fact
   ansible.builtin.set_fact:
     xvfb_os_family: >-
-      {{ 'NixOS' if (ansible_facts.os_family | default(ansible_os_family | default('Unknown')) == 'OtherLinux' and xvfb_nix_store_stat.stat.exists)
+      {{ 'NixOS' if (ansible_facts.os_family | default(ansible_os_family | default('Unknown')) == 'OtherLinux'
+      and xvfb_nix_store_stat.stat.exists)
       else ansible_facts.os_family | default(ansible_os_family | default('Unknown')) }}
 
 - name: Includes operating system specific tasks to install Xvfb
