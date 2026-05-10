@@ -7,18 +7,20 @@ on:
     paths-ignore:
       - '.devcontainer/**'
       - '.github/workflows/cogni-ai-agent.yml'
+      - '.github/workflows/cogni-ai-agent-sudo.yml'
       - '.github/workflows/copilot-setup-steps.yml'
-      - '**/*.cfg'
-      - '**/*.md'
+      - '**.cfg'
+      - '**.md'
       - '.*'
       - Pipfile*
   push:
     paths-ignore:
       - '.devcontainer/**'
       - '.github/workflows/cogni-ai-agent.yml'
+      - '.github/workflows/cogni-ai-agent-sudo.yml'
       - '.github/workflows/copilot-setup-steps.yml'
-      - '**/*.cfg'
-      - '**/*.md'
+      - '**.cfg'
+      - '**.md'
       - '.*'
       - Pipfile*
   workflow_dispatch:
