@@ -3,8 +3,8 @@
 Agent guidance for the `ansible-role-xvfb` Ansible role.
 
 For project overview and install instructions, see [README.md](README.md).
-For project facts and architecture mindmap, see [FACTS.mmd](FACTS.mmd).
-For execution flows and logic diagrams, see [FLOWS.mmd](FLOWS.mmd).
+For project facts and architecture mindmap, see [FACTS.mmd](docs/FACTS.mmd).
+For execution flows and logic diagrams, see [FLOWS.mmd](docs/FLOWS.mmd).
 
 ## Setup & Environment Invariants
 
@@ -221,8 +221,8 @@ pre-commit run j2lint -a
 ## References
 
 - Project documentation: [README.md](README.md)
-- Project facts: [FACTS.mmd](FACTS.mmd)
-- Project flows: [FLOWS.mmd](FLOWS.mmd)
+- Project facts: [FACTS.mmd](docs/FACTS.mmd)
+- Project flows: [FLOWS.mmd](docs/FLOWS.mmd)
 - Agent conventions: [.github/copilot-instructions.md](.github/copilot-instructions.md)
 - Molecule docs: <https://docs.ansible.com/projects/molecule/>
 - Ansible lint rules: <https://docs.ansible.com/projects/lint/rules/>
