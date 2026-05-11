@@ -28,6 +28,7 @@ For execution flows and logic diagrams, see [FLOWS.mmd](docs/FLOWS.mmd).
 | `molecule/default/molecule.yml` | Molecule scenario config (platforms, provisioner, test sequence) |
 | `molecule/default/{prepare,converge,verify}.yml` | Molecule playbooks |
 | `molecule/resources/playbooks/Dockerfile.j2` | NixOS container build template |
+| `docs/{FACTS,FLOWS}.mmd` | Project facts and execution flow diagrams |
 | `requirements.yml` | Ansible Galaxy collection dependencies |
 | `.pre-commit-config.yaml` | Pre-commit hooks (yamllint, ansible-lint, j2lint, etc.) |
 | `.github/prompts/molecule-test.prompt.md` | Step-by-step Molecule test runner prompt |
