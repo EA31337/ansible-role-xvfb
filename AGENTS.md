@@ -3,8 +3,8 @@
 Agent guidance for the `ansible-role-xvfb` Ansible role.
 
 For project overview and install instructions, see [README.md](README.md).
-For project facts and architecture mindmap, see [FACTS.md](FACTS.md).
-For execution flows and logic diagrams, see [FLOWS.md](FLOWS.md).
+For project facts and architecture mindmap, see [FACTS.mmd](FACTS.mmd).
+For execution flows and logic diagrams, see [FLOWS.mmd](FLOWS.mmd).
 
 ## Setup & Environment Invariants
 
@@ -216,13 +216,13 @@ pre-commit run j2lint -a
 - Workflows live in `.github/workflows/`.
 - Use `actionlint` to validate workflow syntax.
 - Molecule workflow uses `gofrolist/molecule-action@v2` with per-platform matrix.
-- `paths-ignore` excludes `**.md`, `**.cfg`, `.*`, `LICENSE`, `Pipfile*` from triggers.
+- `paths-ignore` excludes `**.md`, `**.mmd`, `**.cfg`, `.*`, `LICENSE`, `Pipfile*` from triggers.
 
 ## References
 
 - Project documentation: [README.md](README.md)
-- Project facts: [FACTS.md](FACTS.md)
-- Project flows: [FLOWS.md](FLOWS.md)
+- Project facts: [FACTS.mmd](FACTS.mmd)
+- Project flows: [FLOWS.mmd](FLOWS.mmd)
 - Agent conventions: [.github/copilot-instructions.md](.github/copilot-instructions.md)
 - Molecule docs: <https://docs.ansible.com/projects/molecule/>
 - Ansible lint rules: <https://docs.ansible.com/projects/lint/rules/>
