@@ -10,8 +10,8 @@
 
 Ansible role to install Xvfb (X virtual framebuffer) on UNIX-like platforms.
 
-For project facts and architecture mindmap, see [FACTS.mmd](FACTS.mmd).
-For execution flows and logic diagrams, see [FLOWS.mmd](FLOWS.mmd).
+For project facts and architecture mindmap, see [FACTS.md](FACTS.md).
+For execution flows and logic diagrams, see [FLOWS.md](FLOWS.md).
 
 ## Requirements
 

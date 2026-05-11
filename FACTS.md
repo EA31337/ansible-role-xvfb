@@ -1,4 +1,7 @@
-%% FACTS.mmd
+# Project Facts
+
+```mermaid
+%% FACTS.md
 %% Note: Keep items in alphabetical order.
 mindmap
   root((ansible-role-xvfb))
@@ -32,3 +35,4 @@ mindmap
         Testing
           "Docker::Containers"
           "Molecule::Scenarios"
+```
