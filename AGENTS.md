@@ -3,6 +3,8 @@
 Agent guidance for the `ansible-role-xvfb` Ansible role.
 
 For project overview and install instructions, see [README.md](README.md).
+For project facts and architecture mindmap, see [FACTS.mmd](docs/FACTS.mmd).
+For execution flows and logic diagrams, see [FLOWS.mmd](docs/FLOWS.mmd).
 
 ## Setup & Environment Invariants
 
@@ -26,6 +28,7 @@ For project overview and install instructions, see [README.md](README.md).
 | `molecule/default/molecule.yml` | Molecule scenario config (platforms, provisioner, test sequence) |
 | `molecule/default/{prepare,converge,verify}.yml` | Molecule playbooks |
 | `molecule/resources/playbooks/Dockerfile.j2` | NixOS container build template |
+| `docs/{FACTS,FLOWS}.mmd` | Project facts and execution flow diagrams |
 | `requirements.yml` | Ansible Galaxy collection dependencies |
 | `.pre-commit-config.yaml` | Pre-commit hooks (yamllint, ansible-lint, j2lint, etc.) |
 | `.github/prompts/molecule-test.prompt.md` | Step-by-step Molecule test runner prompt |
@@ -79,8 +82,7 @@ pre-commit run -a
 
 ### Test Sequence
 
-`dependency -> cleanup -> destroy -> syntax -> create -> prepare -> converge ->
-idempotence -> side_effect -> verify -> cleanup -> destroy`
+`dependency -> destroy -> syntax -> create -> prepare -> converge -> idempotence -> verify -> destroy`
 
 ## Troubleshooting Matrix
 
@@ -215,11 +217,13 @@ pre-commit run j2lint -a
 - Workflows live in `.github/workflows/`.
 - Use `actionlint` to validate workflow syntax.
 - Molecule workflow uses `gofrolist/molecule-action@v2` with per-platform matrix.
-- `paths-ignore` excludes `**.md`, `**.cfg`, `.*`, `LICENSE`, `Pipfile*` from triggers.
+- `paths-ignore` excludes `**.md`, `**.mmd`, `**.cfg`, `.*`, `LICENSE`, `Pipfile*` from triggers.
 
 ## References
 
 - Project documentation: [README.md](README.md)
+- Project facts: [FACTS.mmd](docs/FACTS.mmd)
+- Project flows: [FLOWS.mmd](docs/FLOWS.mmd)
 - Agent conventions: [.github/copilot-instructions.md](.github/copilot-instructions.md)
 - Molecule docs: <https://docs.ansible.com/projects/molecule/>
 - Ansible lint rules: <https://docs.ansible.com/projects/lint/rules/>

@@ -12,7 +12,9 @@ on:
       - '.github/workflows/galaxy-publish.yml'
       - '**.cfg'
       - '**.md'
+      - '**.mmd'
       - '.*'
+      - LICENSE
       - Pipfile*
   push:
     paths-ignore:
@@ -23,7 +25,9 @@ on:
       - '.github/workflows/galaxy-publish.yml'
       - '**.cfg'
       - '**.md'
+      - '**.mmd'
       - '.*'
+      - LICENSE
       - Pipfile*
   workflow_dispatch:
 

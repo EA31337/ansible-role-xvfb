@@ -10,6 +10,9 @@
 
 Ansible role to install Xvfb (X virtual framebuffer) on UNIX-like platforms.
 
+For project facts and architecture mindmap, see [FACTS.mmd](docs/FACTS.mmd).
+For execution flows and logic diagrams, see [FLOWS.mmd](docs/FLOWS.mmd).
+
 ## Requirements
 
 This role requires:
@@ -109,6 +112,11 @@ The following tags are available for `ghcr.io/ea31337/ansible-role-xvfb`:
 GNU GPL v3
 
 See: [LICENSE](./LICENSE)
+
+## References
+
+- Project facts: [FACTS.mmd](docs/FACTS.mmd)
+- Project flows: [FLOWS.mmd](docs/FLOWS.mmd)
 
 <!-- Named links -->
 
