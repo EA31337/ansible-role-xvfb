@@ -113,6 +113,11 @@ GNU GPL v3
 
 See: [LICENSE](./LICENSE)
 
+## References
+
+- Project facts: [FACTS.mmd](docs/FACTS.mmd)
+- Project flows: [FLOWS.mmd](docs/FLOWS.mmd)
+
 <!-- Named links -->
 
 [license-badge]: https://img.shields.io/badge/license-GPLv3-brightgreen.svg
