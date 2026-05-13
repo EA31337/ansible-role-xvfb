@@ -47,7 +47,6 @@ COPY templates/ templates/
 COPY vars/ vars/
 COPY ansible.cfg .
 COPY requirements.yml .
-COPY README.md .
 
 # Create a local playbook to apply the role
 RUN ansible-galaxy role install -r requirements.yml --force && \
