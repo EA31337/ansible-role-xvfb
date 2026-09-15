@@ -63,22 +63,50 @@ For execution flows and logic diagrams, see [FLOWS.mmd](docs/FLOWS.mmd).
 
 ### Running Tests
 
-When asked to run molecule test, follow the step-by-step instructions in
-[`.github/prompts/molecule-test.prompt.md`](.github/prompts/molecule-test.prompt.md).
+Molecule and Ansible are installed via the project `Pipfile`, so run every
+command through `pipenv` (they are not on `PATH`):
 
 ```bash
+# Install/refresh dependencies (first run)
+pipenv install
+
 # Full test suite (all platforms)
-molecule test
+pipenv run molecule test
 
 # Single platform
-molecule test --platform-name debian-latest
+pipenv run molecule test --platform-name debian-latest
 
 # Syntax check only
-molecule syntax
+pipenv run molecule syntax
 
 # Lint only
 pre-commit run -a
 ```
+
+When asked to run molecule test, follow the step-by-step instructions in
+[`.github/prompts/molecule-test.prompt.md`](.github/prompts/molecule-test.prompt.md).
+
+#### Sandboxed / firewalled environments
+
+The Molecule Docker playbooks support opt-in environment variables for
+environments where the default Docker bridge has no outbound NAT, DNS returns
+unroutable IPv6 addresses, or the host already runs an X server on `:0`:
+
+| Variable | Purpose |
+| --- | --- |
+| `MOLECULE_DOCKER_NETWORK=host` | Run containers and image builds on the host network. |
+| `MOLECULE_DOCKER_FORCE_IPV4=true` | Prefer IPv4 for DNS resolution inside containers. |
+| `MOLECULE_XVFB_DISPLAY_BASE=90` | Assign a unique X display per host (base + host index). |
+
+```bash
+MOLECULE_DOCKER_NETWORK=host \
+MOLECULE_DOCKER_FORCE_IPV4=true \
+MOLECULE_XVFB_DISPLAY_BASE=90 \
+pipenv run molecule test
+```
+
+When unset (the default), the playbooks use bridge networking, the container's
+default DNS behaviour, and display `:0` - matching CI.
 
 ### Test Sequence
 
