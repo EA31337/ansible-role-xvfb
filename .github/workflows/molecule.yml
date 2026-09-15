@@ -45,6 +45,7 @@ jobs:
           - xvfb-default-debian-latest
           - xvfb-default-nixos-latest
           - xvfb-default-ubuntu-jammy
+          - xvfb-default-ubuntu-latest
           - xvfb-default-ubuntu-noble
     env:
       MOLECULE_REPORT: molecule-${{ matrix.scenario }}-${{ matrix.platform }}-report.html
