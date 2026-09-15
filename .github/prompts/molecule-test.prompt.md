@@ -39,12 +39,12 @@ Run all Molecule scenarios and report results as a table.
 
 | Container | Image | Notes |
 | --- | --- | --- |
-| `alpine-latest` | `i386/alpine:latest` | 32-bit Alpine; uses `apk` |
-| `debian-latest` | `debian:latest` | Uses `apt` |
-| `nixos-latest` | `nixos/nix:latest` | Custom Dockerfile; uses `nix-env` |
-| `ubuntu-jammy` | `ubuntu:jammy` | Uses `apt` |
-| `ubuntu-noble` | `ubuntu:noble` | Uses `apt` |
-| `ubuntu-latest` | `ubuntu:latest` | Uses `apt` |
+| `xvfb-alpine-latest` | `i386/alpine:latest` | 32-bit Alpine; uses `apk` |
+| `xvfb-debian-latest` | `debian:latest` | Uses `apt` |
+| `xvfb-nixos-latest` | `nixos/nix:latest` | Custom Dockerfile; uses `nix-env` |
+| `xvfb-ubuntu-jammy` | `ubuntu:jammy` | Uses `apt` |
+| `xvfb-ubuntu-noble` | `ubuntu:noble` | Uses `apt` |
+| `xvfb-ubuntu-latest` | `ubuntu:latest` | Uses `apt` |
 
 ## Results Template
 
@@ -55,12 +55,12 @@ Use PASS for pass, FAIL for fail, SKIP for skipped.
 
 | Platform | create | prepare | converge | idempotence | verify |
 | --- | :---: | :---: | :---: | :---: | :---: |
-| `alpine-latest` | | | | | |
-| `debian-latest` | | | | | |
-| `nixos-latest` | | | | | |
-| `ubuntu-jammy` | | | | | |
-| `ubuntu-noble` | | | | | |
-| `ubuntu-latest` | | | | | |
+| `xvfb-alpine-latest` | | | | | |
+| `xvfb-debian-latest` | | | | | |
+| `xvfb-nixos-latest` | | | | | |
+| `xvfb-ubuntu-jammy` | | | | | |
+| `xvfb-ubuntu-noble` | | | | | |
+| `xvfb-ubuntu-latest` | | | | | |
 
 ## Troubleshooting
 

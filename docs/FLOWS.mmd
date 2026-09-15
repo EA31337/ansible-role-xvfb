@@ -18,12 +18,12 @@ flowchart TD
         CI2 --> CI3["Run Molecule Matrix"]
         subgraph Molecule_Matrix [Molecule Matrix]
             direction LR
-            CI4["alpine-latest"]
-            CI5["debian-latest"]
-            CI6["nixos-latest"]
-            CI7["ubuntu-jammy"]
-            CI8["ubuntu-noble"]
-            CI9["ubuntu-latest"]
+            CI4["xvfb-alpine-latest"]
+            CI5["xvfb-debian-latest"]
+            CI6["xvfb-nixos-latest"]
+            CI7["xvfb-ubuntu-jammy"]
+            CI8["xvfb-ubuntu-noble"]
+            CI9["xvfb-ubuntu-latest"]
         end
         CI3 --> Molecule_Matrix
     end

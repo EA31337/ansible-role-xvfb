@@ -86,12 +86,16 @@ Requirements:
 
 | Platform | Image | Notes |
 | --- | --- | --- |
-| `alpine-latest` | `i386/alpine:latest` | 32-bit Alpine, uses `apk` |
-| `debian-latest` | `debian:latest` | Uses `apt` |
-| `nixos-latest` | Custom Dockerfile from `nixos/nix:latest` | Requires `pre_build_image: false` |
-| `ubuntu-jammy` | `ubuntu:jammy` | Uses `apt` |
-| `ubuntu-noble` | `ubuntu:noble` | Uses `apt` |
-| `ubuntu-latest` | `ubuntu:latest` | Uses `apt` |
+| `xvfb-alpine-latest` | `i386/alpine:latest` | 32-bit Alpine, uses `apk` |
+| `xvfb-debian-latest` | `debian:latest` | Uses `apt` |
+| `xvfb-nixos-latest` | Custom Dockerfile from `nixos/nix:latest` | Requires `pre_build_image: false` |
+| `xvfb-ubuntu-jammy` | `ubuntu:jammy` | Uses `apt` |
+| `xvfb-ubuntu-noble` | `ubuntu:noble` | Uses `apt` |
+| `xvfb-ubuntu-latest` | `ubuntu:latest` | Uses `apt` |
+
+Platform names are prefixed with the role name (`xvfb-`) because Molecule's Docker
+driver names each container exactly after its platform. Generic names such as
+`debian-latest` would collide with concurrent Molecule runs of other roles.
 
 ### Running Tests
 
@@ -106,7 +110,7 @@ pipenv install
 pipenv run molecule test
 
 # Single platform
-pipenv run molecule test --platform-name debian-latest
+pipenv run molecule test --platform-name xvfb-debian-latest
 
 # Syntax check only
 pipenv run molecule syntax

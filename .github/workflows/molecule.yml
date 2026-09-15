@@ -41,11 +41,11 @@ jobs:
         scenario:
           - default
         platform:
-          - alpine-latest
-          - debian-latest
-          - nixos-latest
-          - ubuntu-jammy
-          - ubuntu-noble
+          - xvfb-alpine-latest
+          - xvfb-debian-latest
+          - xvfb-nixos-latest
+          - xvfb-ubuntu-jammy
+          - xvfb-ubuntu-noble
     env:
       MOLECULE_REPORT: molecule-${{ matrix.scenario }}-${{ matrix.platform }}-report.html
     steps:
