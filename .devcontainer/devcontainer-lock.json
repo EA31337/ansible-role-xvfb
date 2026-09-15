@@ -15,10 +15,10 @@
       "resolved": "ghcr.io/devcontainers-extra/features/pipx-package@sha256:c363f3d6a519def38010afaca9f3a347031aa40551e6eb18b33fba4cd1cfbefb",
       "integrity": "sha256:c363f3d6a519def38010afaca9f3a347031aa40551e6eb18b33fba4cd1cfbefb"
     },
-    "ghcr.io/devcontainers/features/docker-in-docker:2": {
-      "version": "2.17.0",
-      "resolved": "ghcr.io/devcontainers/features/docker-in-docker@sha256:25b9f05705ffba7dbe503230ac76081419306f8c8bc88e0ce78c4ecd99a0c78c",
-      "integrity": "sha256:25b9f05705ffba7dbe503230ac76081419306f8c8bc88e0ce78c4ecd99a0c78c"
+    "ghcr.io/devcontainers/features/docker-in-docker:4": {
+      "version": "4.1.0",
+      "resolved": "ghcr.io/devcontainers/features/docker-in-docker@sha256:7d979c4a36d595eb4ab79909caa3f396daf3b6152dcf38e8328ea4eff42206c7",
+      "integrity": "sha256:7d979c4a36d595eb4ab79909caa3f396daf3b6152dcf38e8328ea4eff42206c7"
     },
     "ghcr.io/devcontainers/features/python:1": {
       "version": "1.8.0",
