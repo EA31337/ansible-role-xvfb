@@ -12,6 +12,7 @@ collections
 __pycache__
 requirements-local.yml
 *.swp
+.venv/
 *.txt
 *.verb
 /.github/agents/

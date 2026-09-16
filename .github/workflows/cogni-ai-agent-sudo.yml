@@ -74,28 +74,9 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           agent: ${{ inputs.agent }}
-          model: ${{ inputs.model }}
+          model: ${{ inputs.model || 'opencode/gemini-3-flash' }}
           opencode-api-key: ${{ secrets.OPENCODE_API_KEY }}  # <https://opencode.ai/auth>
           permissions: |-
             bash:
               '*': allow
           prompt: ${{ inputs.prompt }}
-
-  summary:
-    name: Generate Summary (post-run)
-    needs: cogni-ai-agent-sudo
-    if: always() && needs.cogni-ai-agent-sudo.result != 'skipped'
-    runs-on: ubuntu-latest
-    permissions:
-      actions: read
-      contents: read
-      id-token: write
-    steps:
-      - uses: actions/checkout@v6
-        with:
-          persist-credentials: false
-      - name: Generate Summary
-        uses: Cogni-AI-OU/cogni-ai-agent-action/ai-inference/summary@main
-        with:
-          agent_job_id: cogni-ai-agent-sudo
-          github_token: ${{ secrets.GITHUB_TOKEN }}
