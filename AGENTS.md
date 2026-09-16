@@ -82,6 +82,11 @@ Requirements:
   Galaxy hosts. Host firewalls that prompt per connection (e.g. Portmaster) block the `nanolayer`
   downloads long enough to time out - pre-allow those domains.
 
+## Docker Tests
+
+The standalone Docker test playbooks in `tests/`, how to run them via `pipenv`, and
+their troubleshooting matrix live in [tests/AGENTS.md](tests/AGENTS.md).
+
 ## Molecule Testing
 
 Molecule scenarios, the platform matrix, how to run the tests, and Molecule-specific
